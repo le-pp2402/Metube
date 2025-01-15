@@ -171,4 +171,9 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         resource.setSummarize(summarize);
         return resourceResponseMapper.toDTO(resource);
     }
+
+
+    public ResourceResponse save(String streamKey, String fileName) {
+        return null;
+    }
 }

@@ -41,7 +41,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @PostMapping("/upload")
-    public ResponseEntity upload(@ModelAttribute @Validate UploadResourceRequest request) {
+    public ResponseEntity<?> upload(@ModelAttribute @Validate UploadResourceRequest request) {
         try {
             return BuildResponse.ok(resourceService.save(request));
         } catch (UnauthorizationException e) {
@@ -53,7 +53,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity findById(@PathVariable Integer id) {
+    public ResponseEntity<?> findById(@PathVariable Integer id) {
         try {
             return BuildResponse.ok(resourceService.findDTOById(id));
         } catch (EntityNotFoundException e) {
@@ -65,7 +65,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteById(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         try {
             resourceService.deleteById(id);
             return BuildResponse.ok("deleted resources id = " + id);
@@ -76,7 +76,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @Override
     @PostMapping
-    public ResponseEntity findAll(@RequestBody ResourcesFilter request) {
+    public ResponseEntity<?> findAll(@RequestBody ResourcesFilter request) {
         try {
             return BuildResponse.ok(
                     resourceService.search(request)
@@ -88,14 +88,14 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @DeleteMapping("/delete-all")
-    public ResponseEntity deleteAll() {
+    public ResponseEntity<?> deleteAll() {
         resourceService.deleteAll();
         return BuildResponse.ok("deleted");
     }
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable("id") Integer id, @RequestBody UpdateResourceRequest request) {
+    public ResponseEntity<?> update(@PathVariable("id") Integer id, @RequestBody UpdateResourceRequest request) {
         try {
             return BuildResponse.ok(resourceService.update(request, id));
         } catch (EntityNotFoundException e) {
@@ -108,7 +108,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @GetMapping("/gen/{id}")
-    public ResponseEntity generateSummarize(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> generateSummarize(@PathVariable("id") Integer id) {
         try {
             String content = resourceService.readSubFile(id);
             String summarize = geminiService.generator(content);
@@ -122,7 +122,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @PutMapping("/gen/{id}")
-    public ResponseEntity setSummarize(@PathVariable("id") Integer id, @RequestBody SummarizeRequest request) {
+    public ResponseEntity<?> setSummarize(@PathVariable("id") Integer id, @RequestBody SummarizeRequest request) {
         try {
             return BuildResponse.ok(resourceService.setSummarize(id, request.getSummarize()));
         } catch (Exception e) {
