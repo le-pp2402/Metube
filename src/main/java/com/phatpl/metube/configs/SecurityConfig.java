@@ -27,13 +27,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class SecurityConfig {
     @Value("${SECRET_KEY}")
     private String secretKey;
-//    private final String[] GET_PERMIT_ALL_URL = {"/login", "/groups", "/words/{spring:[0-9]+}", "/resources", "/resources/{spring:[0-9]+}", "/video/**", "/video", "/live/**", "/ws/**", "/ws"};
-//    private final String[] POST_PERMIT_ALL_URL = {"/register", "/words/w/**", "/resources", "/video/**", "/live", "/live/**"};
-//    private final String[] PUT_PERMIT_ALL_URL = {"/verify"};
-
-    private final String[] GET_PERMIT_ALL_URL = {"*"};
-    private final String[] POST_PERMIT_ALL_URL = {"*"};
-    private final String[] PUT_PERMIT_ALL_URL = {"*"};
+    private final String[] GET_PERMIT_ALL_URL = { "/groups", "/words/{spring:[0-9]+}", "/resources", "/resources/{spring:[0-9]+}", "/video/**", "/video", "/live/**", "/ws/**", "/ws"};
+    private final String[] POST_PERMIT_ALL_URL = {"/register", "/words/w/**", "/resources", "/video/**", "/live", "/live/**", "/login"};
+    private final String[] PUT_PERMIT_ALL_URL = {"/verify"};
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthFilter jwtAuthFilter;

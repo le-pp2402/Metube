@@ -1,7 +1,7 @@
 package com.phatpl.metube.mappers;
 
+import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.models.Resource;
-import com.phatpl.metube.services.ResourceResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.factory.Mappers;

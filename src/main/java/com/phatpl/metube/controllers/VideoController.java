@@ -29,7 +29,7 @@ import java.security.NoSuchAlgorithmException;
 public class VideoController {
 
     @Value("${WHISPER_API}")
-    private String linkWhipserService;
+    private String linkWhisperService;
     private static final HttpClient httpClient = HttpClient.newBuilder().version(HttpClient.Version.HTTP_2).build();
 
     MinIOService minIOService;
@@ -41,8 +41,17 @@ public class VideoController {
         this.resourceService = resourceService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> loadAll() {
+        try {
+            return BuildResponse.ok(resourceService.findAllDTO());
+        } catch (Exception e) {
+            return BuildResponse.badRequest(e.getMessage());
+        }
+    }
+
     @GetMapping("/{folder}/video/{file}")
-    public ResponseEntity loadVideo(@PathVariable("folder") String folder,
+    public ResponseEntity<?> loadVideo(@PathVariable("folder") String folder,
                                     @PathVariable("file") String file) {
         try {
             var response = resourceService.getVideo(folder, file);
@@ -56,7 +65,7 @@ public class VideoController {
     }
 
     @GetMapping("/{folder}/x/{file}")
-    public ResponseEntity loadSubtitle(@PathVariable("folder") String folder,
+    public ResponseEntity<?> loadSubtitle(@PathVariable("folder") String folder,
                                        @PathVariable("file") String file) {
         try {
             var response = resourceService.getSubtitle(folder, file);
@@ -83,7 +92,7 @@ public class VideoController {
         try {
             HttpRequest req = HttpRequest.newBuilder()
                     .GET()
-                    .uri(URI.create(linkWhipserService + id))
+                    .uri(URI.create(linkWhisperService + id))
                     .header("Content-type", "text")
                     .build();
             HttpResponse<String> res = httpClient.send(req, HttpResponse.BodyHandlers.ofString());

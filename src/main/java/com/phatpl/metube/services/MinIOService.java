@@ -31,7 +31,7 @@ public class MinIOService {
 
     public String newFileName(String filename) {
         log.info(filename);
-        String[] words = filename.split("[ ]");
+        String[] words = filename.split(" ");
         StringBuilder str = new StringBuilder();
         for (var word : words) {
             word = word.trim();

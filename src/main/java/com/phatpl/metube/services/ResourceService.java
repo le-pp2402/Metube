@@ -3,6 +3,7 @@ package com.phatpl.metube.services;
 import com.meilisearch.sdk.Index;
 import com.phatpl.metube.dtos.request.UpdateResourceRequest;
 import com.phatpl.metube.dtos.request.UploadResourceRequest;
+import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
 import com.phatpl.metube.exceptions.UnauthorizationException;
 import com.phatpl.metube.filters.ResourcesFilter;
@@ -10,6 +11,7 @@ import com.phatpl.metube.mappers.ResourceResponseMapper;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.repositories.ResourceRepository;
 import com.phatpl.metube.repositories.UserRepository;
+import com.phatpl.metube.services.processing_resources.RabbitMQService;
 import com.phatpl.metube.utils.Constant;
 import io.minio.errors.MinioException;
 import jakarta.persistence.EntityNotFoundException;
@@ -41,9 +43,10 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
     UserRepository userRepository;
     MeliSearchService meliSearchService;
     UserService userService;
+    RabbitMQService rabbitMQService;
 
     @Autowired
-    public ResourceService(ResourceRepository resourceRepository, ResourceResponseMapper resourceResponseMapper, MinIOService minIOService, UserRepository userRepository, MeliSearchService meliSearchService, Index index, UserService userService) {
+    public ResourceService(ResourceRepository resourceRepository, ResourceResponseMapper resourceResponseMapper, MinIOService minIOService, UserRepository userRepository, MeliSearchService meliSearchService, Index index, UserService userService, RabbitMQService rabbitMQService) {
         super(resourceResponseMapper, resourceRepository);
         this.resourceRepository = resourceRepository;
         this.resourceResponseMapper = resourceResponseMapper;
@@ -51,8 +54,11 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         this.userRepository = userRepository;
         this.meliSearchService = meliSearchService;
         this.userService = userService;
+        this.rabbitMQService = rabbitMQService;
     }
 
+
+    // upload video to minio
     public ResourceResponse save(UploadResourceRequest req) throws Exception {
         var userid = userService.extractUserId();
         var user = userRepository.findById(userid).orElseThrow(UnauthorizationException::new);
@@ -75,12 +81,15 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
             var newElem = resourceRepository.save(resource);
             meliSearchService.addDocument(newElem.getId(), newElem.getTitle(), newElem.getCreatedAt(), newElem.getIsPrivate());
 
+            rabbitMQService.SendMessage(newElem.getId(), Constant.VIDEO_TRANSCODING_QUEUE);
+
             return resourceResponseMapper.toDTO(newElem);
         } else {
             throw new BadRequestException(Constant.INVALID_FORMAT_FILE);
         }
     }
 
+    // upload video to minio
     private HashMap<String, String> uploadVideo(MultipartFile video, MultipartFile enSub, MultipartFile viSub, MultipartFile thumbnail) throws Exception {
         var baseDir = String.valueOf(System.currentTimeMillis());
         var mediaInfo = new HashMap<String, String>();
