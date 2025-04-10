@@ -3,6 +3,11 @@ package com.phatpl.metube.models;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,13 +21,26 @@ public class Resource extends BaseModel {
     String title;
     String video;
     String thumbnail;
-    String enSub;
-    String viSub;
     Boolean isPrivate;
-    Boolean isReady;    
+    Boolean isReady;
+
+    @ColumnDefault(value = "0")
+    Integer viewCount;
+
     @Column(columnDefinition = "LONGTEXT")
     String summarize;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
+
+
+    @OneToMany(
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(
+            name = "resources_id"
+    )
+    List<Subtitle> subtitles = new ArrayList<>();
 }

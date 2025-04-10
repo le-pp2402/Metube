@@ -1,4 +1,4 @@
-package com.phatpl.metube.controllers;
+package com.phatpl.metube.controllers.livestream;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +14,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @RestController
-public class StreamingHandleController {
+public class ViewCountController {
 
-//    @Autowired
-//    private SimpMessagingTemplate simpMessagingTemplate;
-
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     private final ConcurrentHashMap<Long, AtomicInteger> viewCount = new ConcurrentHashMap<>();
 
     @MessageMapping("/updateView.{videoId}")
     public void updateView(@DestinationVariable Long videoId, @Payload String message) {
         int newViewCount = viewCount.computeIfAbsent(videoId, k -> new AtomicInteger(0)).incrementAndGet();
-//        simpMessagingTemplate.convertAndSend("/topic/videoViews." + videoId, newViewCount);
+        simpMessagingTemplate.convertAndSend("/topic/videoViews." + videoId, newViewCount);
     }
 
     @MessageMapping("/news")

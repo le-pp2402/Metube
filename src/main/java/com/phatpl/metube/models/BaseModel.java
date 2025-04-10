@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 
 @MappedSuperclass
 @Getter
-@Setter
+@Setter     
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseModel {

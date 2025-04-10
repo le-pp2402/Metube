@@ -42,6 +42,11 @@ public class UserService extends BaseService<User, UserResponse, UserFilter, Int
         this.userResponseMapper = userResponseMapper;
     }
 
+    public UserResponse findByStreamKey(String streamKey) {
+        var user = userRepository.findByStreamKey(streamKey);
+        return user.map(userResponseMapper::toDTO).orElse(null);
+    }
+
     public UserResponse register(RegisterRequest request) throws RuntimeException {
         String username = request.getUsername();
         String email = request.getEmail();

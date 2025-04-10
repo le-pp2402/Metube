@@ -106,19 +106,19 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
         }
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    @GetMapping("/gen/{id}")
-    public ResponseEntity<?> generateSummarize(@PathVariable("id") Integer id) {
-        try {
-            String content = resourceService.readSubFile(id);
-            String summarize = geminiService.generator(content);
-            var hm = new HashMap<String, String>();
-            hm.put("summarize", summarize);
-            return BuildResponse.ok(hm);
-        } catch (Exception e) {
-            return BuildResponse.badRequest(e.getMessage());
-        }
-    }
+//    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+//    @GetMapping("/gen/{id}")
+//    public ResponseEntity<?> generateSummarize(@PathVariable("id") Integer id) {
+//        try {
+//            String content = resourceService.readSubFile(id);
+//            String summarize = geminiService.generator(content);
+//            var hm = new HashMap<String, String>();
+//            hm.put("summarize", summarize);
+//            return BuildResponse.ok(hm);
+//        } catch (Exception e) {
+//            return BuildResponse.badRequest(e.getMessage());
+//        }
+//    }
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @PutMapping("/gen/{id}")

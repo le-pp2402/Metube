@@ -74,8 +74,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
             var mediaInfo = uploadVideo(req.getVideo(), req.getEnSub(), req.getViSub(), req.getThumbnail());
 
             resource.setVideo(mediaInfo.get("video"));
-            resource.setViSub(mediaInfo.get("visub"));
-            resource.setEnSub(mediaInfo.get("ensub"));
             resource.setThumbnail(mediaInfo.get("thumbnail"));
 
             var newElem = resourceRepository.save(resource);
@@ -124,8 +122,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
             var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
             minIOService.delete(resource.getVideo());
-            minIOService.delete(resource.getEnSub());
-            minIOService.delete(resource.getViSub());
 
             meliSearchService.deleteById(id);
 
@@ -157,23 +153,23 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         return minIOService.getFile(folder + "/subtitle/" + file);
     }
 
-    public String readSubFile(Integer id) throws Exception {
-        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        var input = minIOService.getFile(resource.getEnSub());
-
-        var summarize = new StringBuilder();
-        try (Reader reader = new BufferedReader(new InputStreamReader
-                (input, StandardCharsets.UTF_8))) {
-            int c = 0;
-            while ((c = reader.read()) != -1) {
-                if (Character.isLetter(c) || Character.isSpaceChar(c) || Character.isDigit(c))
-                    summarize.append((char) c);
-                else
-                    summarize.append(' ');
-            }
-        }
-        return summarize.toString();
-    }
+//    public String readSubFile(Integer id) throws Exception {
+//        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+//        var input = minIOService.getFile(resource.getEnSub());
+//
+//        var summarize = new StringBuilder();
+//        try (Reader reader = new BufferedReader(new InputStreamReader
+//                (input, StandardCharsets.UTF_8))) {
+//            int c = 0;
+//            while ((c = reader.read()) != -1) {
+//                if (Character.isLetter(c) || Character.isSpaceChar(c) || Character.isDigit(c))
+//                    summarize.append((char) c);
+//                else
+//                    summarize.append(' ');
+//            }
+//        }
+//        return summarize.toString();
+//    }
 
     public ResourceResponse setSummarize(Integer id, String summarize) {
         var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -184,5 +180,9 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
 
     public ResourceResponse save(String streamKey, String fileName) {
         return null;
+    }
+
+    public Integer getViewCount(Integer id) {
+        return resourceRepository.getViewCountById(id);
     }
 }

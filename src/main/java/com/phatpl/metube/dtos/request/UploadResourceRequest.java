@@ -2,16 +2,14 @@ package com.phatpl.metube.dtos.request;
 
 import com.phatpl.metube.utils.Constant;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UploadResourceRequest {
     @NotNull(message = "Title " + Constant.NOT_NULL)
     public String title;
