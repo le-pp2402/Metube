@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/chat")
 public class LiveChatController {
 
-    private SimpMessagingTemplate messageTemplate;
-    private UserService userService;
+    private final SimpMessagingTemplate messageTemplate;
+    private final UserService userService;
 
     @Autowired
     public LiveChatController(SimpMessagingTemplate messageTemplate, UserService userService) {

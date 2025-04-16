@@ -30,13 +30,11 @@ import java.security.NoSuchAlgorithmException;
 public class ResourceController extends BaseController<Resource, ResourceResponse, ResourcesFilter, Integer> {
 
     private final ResourceService resourceService;
-    private final GeminiService geminiService;
 
     @Autowired
     public ResourceController(ResourceService resourceService, GeminiService geminiService) {
         super(resourceService);
         this.resourceService = resourceService;
-        this.geminiService = geminiService;
     }
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
@@ -105,20 +103,6 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
             return BuildResponse.badRequest(e.getMessage());
         }
     }
-
-//    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-//    @GetMapping("/gen/{id}")
-//    public ResponseEntity<?> generateSummarize(@PathVariable("id") Integer id) {
-//        try {
-//            String content = resourceService.readSubFile(id);
-//            String summarize = geminiService.generator(content);
-//            var hm = new HashMap<String, String>();
-//            hm.put("summarize", summarize);
-//            return BuildResponse.ok(hm);
-//        } catch (Exception e) {
-//            return BuildResponse.badRequest(e.getMessage());
-//        }
-//    }
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @PutMapping("/gen/{id}")

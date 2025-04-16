@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class StreamingControler {
 
     private final LiveSessionService liveSessionService;
-    private UserService userService;
-    private ResourceService resourceService;
+    private final UserService userService;
 
     @Autowired
     public StreamingControler(UserService userService, ResourceService resourceService, LiveSessionService liveSessionService) {
         this.userService = userService;
-        this.resourceService = resourceService;
         this.liveSessionService = liveSessionService;
     }
 
@@ -38,14 +36,6 @@ public class StreamingControler {
         } else {
             return ResponseEntity.badRequest().build();
         }
-    }
-
-    @PostMapping("/on_segment/{streamkey}/{filepath}")
-    public ResponseEntity<String> onSegment(@PathVariable("streamkey") String streamKey, @PathVariable("filepath") String filePath) {
-        log.info("On segment request: {}", streamKey);
-        log.info("On segment request: {}", filePath);
-//        streamService.onNewSegment(streamKey, filePath);
-        return ResponseEntity.ok().build();
     }
 
     @PutMapping
