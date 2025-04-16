@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request;
+package com.phatpl.metube.dtos.request.video;
 
 import com.phatpl.metube.utils.Constant;
 import jakarta.validation.constraints.NotNull;
@@ -16,13 +16,4 @@ public class UploadResourceRequest {
 
     @NotNull(message = "Video " + Constant.NOT_NULL)
     public MultipartFile video;
-
-    public MultipartFile enSub;
-
-    public MultipartFile viSub;
-
-    public MultipartFile thumbnail;
-
-    @NotNull(message = "isPrivate " + Constant.NOT_NULL)
-    public Boolean isPrivate;
 }

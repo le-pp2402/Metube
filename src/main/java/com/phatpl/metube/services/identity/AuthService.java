@@ -1,6 +1,6 @@
-package com.phatpl.metube.services;
+package com.phatpl.metube.services.identity;
 
-import com.phatpl.metube.dtos.request.LoginRequest;
+import com.phatpl.metube.dtos.request.identity.LoginRequest;
 import com.phatpl.metube.dtos.response.LoginResponse;
 import com.phatpl.metube.dtos.response.UserResponse;
 import com.phatpl.metube.exceptions.InactiveAccountException;
@@ -9,6 +9,7 @@ import com.phatpl.metube.mappers.LoginResponseMapper;
 import com.phatpl.metube.mappers.UserResponseMapper;
 import com.phatpl.metube.models.User;
 import com.phatpl.metube.repositories.UserRepository;
+import com.phatpl.metube.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

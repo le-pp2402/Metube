@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request;
+package com.phatpl.metube.dtos.request.livestream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuthRequest {
-    private String token;
+@NoArgsConstructor
+public class StartStreamRequest {
+    public String streamKey;
 }

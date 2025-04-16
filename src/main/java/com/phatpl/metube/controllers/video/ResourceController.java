@@ -1,14 +1,15 @@
-package com.phatpl.metube.controllers;
+package com.phatpl.metube.controllers.video;
 
+import com.phatpl.metube.controllers.BaseController;
 import com.phatpl.metube.dtos.request.SummarizeRequest;
-import com.phatpl.metube.dtos.request.UpdateResourceRequest;
-import com.phatpl.metube.dtos.request.UploadResourceRequest;
+import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
+import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
 import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.exceptions.UnauthorizationException;
 import com.phatpl.metube.filters.ResourcesFilter;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.services.GeminiService;
-import com.phatpl.metube.services.ResourceService;
+import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.utils.BuildResponse;
 import io.minio.errors.MinioException;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
 
 @Slf4j
 @RestController

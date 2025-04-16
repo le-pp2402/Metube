@@ -1,6 +1,6 @@
-package com.phatpl.metube.controllers;
+package com.phatpl.metube.controllers.common;
 
-import com.phatpl.metube.dtos.request.RegisterRequest;
+import com.phatpl.metube.dtos.request.identity.RegisterRequest;
 import com.phatpl.metube.services.UserService;
 import com.phatpl.metube.utils.BuildResponse;
 import jakarta.validation.Valid;

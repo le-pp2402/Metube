@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request;
+package com.phatpl.metube.dtos.request.identity;
 
 import com.phatpl.metube.utils.Regex;
 import jakarta.validation.constraints.Pattern;

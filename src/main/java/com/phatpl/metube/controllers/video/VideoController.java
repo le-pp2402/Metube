@@ -1,7 +1,7 @@
-package com.phatpl.metube.controllers;
+package com.phatpl.metube.controllers.video;
 
 import com.phatpl.metube.services.MinIOService;
-import com.phatpl.metube.services.ResourceService;
+import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.utils.BuildResponse;
 import io.minio.errors.MinioException;
 import org.springframework.beans.factory.annotation.Autowired;

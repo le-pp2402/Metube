@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request;
+package com.phatpl.metube.dtos.request.identity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request.stream;
+package com.phatpl.metube.dtos.request.livestream;
 
 public class InititalizeStreamingRequest {
     public String title;

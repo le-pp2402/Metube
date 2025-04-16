@@ -1,4 +1,4 @@
-package com.phatpl.metube.services.processing_resources;
+package com.phatpl.metube.services.video;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

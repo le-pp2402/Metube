@@ -1,4 +1,4 @@
-package com.phatpl.metube.services;
+package com.phatpl.metube.services.identity;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;

@@ -1,6 +1,7 @@
-package com.phatpl.metube.controllers;
+package com.phatpl.metube.controllers.common;
 
-import com.phatpl.metube.dtos.request.UpdatePasswordRequest;
+import com.phatpl.metube.controllers.BaseController;
+import com.phatpl.metube.dtos.request.identity.UpdatePasswordRequest;
 import com.phatpl.metube.dtos.response.UserResponse;
 import com.phatpl.metube.filters.UserFilter;
 import com.phatpl.metube.models.User;

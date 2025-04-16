@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request.stream;
+package com.phatpl.metube.dtos.request.livestream;
 
 import lombok.*;
 
@@ -7,6 +7,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageRequest {
-    private String username;
     private String message;
 }

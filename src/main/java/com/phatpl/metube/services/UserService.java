@@ -1,6 +1,6 @@
 package com.phatpl.metube.services;
 
-import com.phatpl.metube.dtos.request.RegisterRequest;
+import com.phatpl.metube.dtos.request.identity.RegisterRequest;
 import com.phatpl.metube.dtos.response.UserResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
 import com.phatpl.metube.exceptions.ExistedException;
@@ -12,6 +12,7 @@ import com.phatpl.metube.mappers.UserResponseMapper;
 import com.phatpl.metube.models.BaseModel;
 import com.phatpl.metube.models.User;
 import com.phatpl.metube.repositories.UserRepository;
+import com.phatpl.metube.services.identity.MailService;
 import com.phatpl.metube.utils.BCryptPassword;
 import com.phatpl.metube.utils.MailUtil;
 import lombok.AccessLevel;

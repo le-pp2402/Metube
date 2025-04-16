@@ -1,6 +1,6 @@
 package com.phatpl.metube.controllers.livestream;
 
-import com.phatpl.metube.services.ResourceService;
+import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.services.UserService;
 import com.phatpl.metube.services.livestream.LiveSessionService;
 import lombok.extern.slf4j.Slf4j;

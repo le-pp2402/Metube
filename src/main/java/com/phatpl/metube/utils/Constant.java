@@ -9,7 +9,7 @@ public class Constant {
 
     public final static String NOT_NULL = "must not be null";
     public final static String FILE_SIZE_LARGE = "Files are too large to upload";
-    public final static String INVALID_FORMAT_FILE = "Invalid format file";
+    public final static String INVALID_FORMAT_FILE = "FILE_UPLOAD_ERR: Invalid format file";
     public final static String POSTER = "00:00:00.001";
     public final static String TS_SECONDS = "30";
 

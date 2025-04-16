@@ -1,8 +1,8 @@
-package com.phatpl.metube.services;
+package com.phatpl.metube.services.video;
 
 import com.meilisearch.sdk.Index;
-import com.phatpl.metube.dtos.request.UpdateResourceRequest;
-import com.phatpl.metube.dtos.request.UploadResourceRequest;
+import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
+import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
 import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
 import com.phatpl.metube.exceptions.UnauthorizationException;
@@ -11,7 +11,10 @@ import com.phatpl.metube.mappers.ResourceResponseMapper;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.repositories.ResourceRepository;
 import com.phatpl.metube.repositories.UserRepository;
-import com.phatpl.metube.services.processing_resources.RabbitMQService;
+import com.phatpl.metube.services.BaseService;
+import com.phatpl.metube.services.MeliSearchService;
+import com.phatpl.metube.services.MinIOService;
+import com.phatpl.metube.services.UserService;
 import com.phatpl.metube.utils.Constant;
 import io.minio.errors.MinioException;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -66,15 +68,14 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
 
         Resource resource = new Resource();
         resource.setTitle(req.getTitle());
-        resource.setIsPrivate(req.getIsPrivate());
+        resource.setIsPrivate(false);
         resource.setUser(user);
         resource.setIsReady(false);
 
         if (contextType != null && contextType.startsWith("video")) {
-            var mediaInfo = uploadVideo(req.getVideo(), req.getEnSub(), req.getViSub(), req.getThumbnail());
+            var mediaInfo = uploadVideo(req.getVideo());
 
             resource.setVideo(mediaInfo.get("video"));
-            resource.setThumbnail(mediaInfo.get("thumbnail"));
 
             var newElem = resourceRepository.save(resource);
             meliSearchService.addDocument(newElem.getId(), newElem.getTitle(), newElem.getCreatedAt(), newElem.getIsPrivate());
@@ -88,23 +89,11 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
     }
 
     // upload video to minio
-    private HashMap<String, String> uploadVideo(MultipartFile video, MultipartFile enSub, MultipartFile viSub, MultipartFile thumbnail) throws Exception {
+    private HashMap<String, String> uploadVideo(MultipartFile video) throws Exception {
         var baseDir = String.valueOf(System.currentTimeMillis());
         var mediaInfo = new HashMap<String, String>();
-
-        var enSubPath = minIOService.uploadDocument(enSub, baseDir + Constant.SUBTITLE_EN);
-        var viSubPath = minIOService.uploadDocument(viSub, baseDir + Constant.SUBTITLE_VI);
-
         var path = minIOService.uploadVideo(video.getInputStream(), baseDir + "/video/" + "video", video.getContentType());
         mediaInfo.put("video", path);
-        if (thumbnail != null) {
-            var thumbnailPath = minIOService.uploadDocument(thumbnail, baseDir + "/thumbnail");
-            mediaInfo.put("thumbnail", thumbnailPath);
-        }
-
-        mediaInfo.put("ensub", enSubPath);
-        mediaInfo.put("visub", viSubPath);
-
         return mediaInfo;
     }
 

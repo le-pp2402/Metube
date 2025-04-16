@@ -1,4 +1,4 @@
-package com.phatpl.metube.dtos.request;
+package com.phatpl.metube.dtos.request.video;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

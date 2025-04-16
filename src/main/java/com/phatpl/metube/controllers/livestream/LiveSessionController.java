@@ -1,18 +1,12 @@
 package com.phatpl.metube.controllers.livestream;
 
-import com.phatpl.metube.dtos.request.stream.InititalizeStreamingRequest;
-import com.phatpl.metube.dtos.response.LiveSessionResponse;
-import com.phatpl.metube.models.LiveSession;
-import com.phatpl.metube.repositories.LiveSessionRepository;
+import com.phatpl.metube.dtos.request.livestream.InititalizeStreamingRequest;
 import com.phatpl.metube.services.livestream.LiveSessionService;
 import com.phatpl.metube.utils.BuildResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.function.EntityResponse;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/live-session")
