@@ -1,6 +1,6 @@
 package com.phatpl.metube.services;
 
-import com.phatpl.metube.dtos.request.RegisterRequest;
+import com.phatpl.metube.dtos.request.identity.RegisterRequest;
 import com.phatpl.metube.dtos.response.UserResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
 import com.phatpl.metube.exceptions.ExistedException;
@@ -12,6 +12,7 @@ import com.phatpl.metube.mappers.UserResponseMapper;
 import com.phatpl.metube.models.BaseModel;
 import com.phatpl.metube.models.User;
 import com.phatpl.metube.repositories.UserRepository;
+import com.phatpl.metube.services.identity.MailService;
 import com.phatpl.metube.utils.BCryptPassword;
 import com.phatpl.metube.utils.MailUtil;
 import lombok.AccessLevel;
@@ -40,6 +41,11 @@ public class UserService extends BaseService<User, UserResponse, UserFilter, Int
         this.userRepository = userRepository;
         this.mailService = mailService;
         this.userResponseMapper = userResponseMapper;
+    }
+
+    public UserResponse findByStreamKey(String streamKey) {
+        var user = userRepository.findByStreamKey(streamKey);
+        return user.map(userResponseMapper::toDTO).orElse(null);
     }
 
     public UserResponse register(RegisterRequest request) throws RuntimeException {

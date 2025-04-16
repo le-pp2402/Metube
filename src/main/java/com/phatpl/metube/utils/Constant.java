@@ -9,7 +9,7 @@ public class Constant {
 
     public final static String NOT_NULL = "must not be null";
     public final static String FILE_SIZE_LARGE = "Files are too large to upload";
-    public final static String INVALID_FORMAT_FILE = "Invalid format file";
+    public final static String INVALID_FORMAT_FILE = "FILE_UPLOAD_ERR: Invalid format file";
     public final static String POSTER = "00:00:00.001";
     public final static String TS_SECONDS = "30";
 
@@ -20,6 +20,7 @@ public class Constant {
     public final static String CT_APPLICATION_JSON = "application/json";
 
     public final static String ACCOUNT_NOT_FOUND = "Account not found";
-    public final static String FRIEND_REQUEST_NOT_FOUND = "Friend request not found";
 
+    public final static String VIDEO_TRANSCODING_QUEUE = "video-transcoding";
+    public final static String SUBTITLE_GENERATE_QUEUE = "video-transcode";
 }

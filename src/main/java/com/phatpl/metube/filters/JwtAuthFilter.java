@@ -1,6 +1,6 @@
 package com.phatpl.metube.filters;
 
-import com.phatpl.metube.services.JWTService;
+import com.phatpl.metube.services.identity.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

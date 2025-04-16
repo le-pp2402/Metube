@@ -33,4 +33,7 @@ public class User extends BaseModel {
 
     Integer code;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    LiveSession liveSession;
+
 }

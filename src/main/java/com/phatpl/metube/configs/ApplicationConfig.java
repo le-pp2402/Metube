@@ -24,6 +24,7 @@ public class ApplicationConfig {
 
     private final UserRepository userRepository;
 
+    // Lấy người người từ database lên bằng username để provider xác thực
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
@@ -33,6 +34,9 @@ public class ApplicationConfig {
         };
     }
 
+    // Cung cấp nhiều cách xác thực khác nhau chằng hạn như DAO, OAuth2Login, LDAP, ...
+    // Ở đây mình chọn bộ xác thực là Dao và set userDetailsService cho nó là userDetailsService() ở trên
+    // Ngoài ra mình set passwordEncoder là BCryptPasswordEncoder với độ dài salt là 8 để mã hóa mật khẩu măc định
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -41,6 +45,9 @@ public class ApplicationConfig {
         return authProvider;
     }
 
+    // Tạo ra một bean AuthenticationManager để sử dụng trong việc xác thực giao tiếp với các lớp filter
+    // và các lớp xác thực khác
+    // cụ thể nó sẽ duyệt qua các providers và tìm kiếm provider phù hợp để xác thực
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
