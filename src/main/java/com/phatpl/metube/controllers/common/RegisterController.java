@@ -1,6 +1,7 @@
 package com.phatpl.metube.controllers.common;
 
 import com.phatpl.metube.dtos.request.identity.RegisterRequest;
+import com.phatpl.metube.exceptions.AlreadyExistsException;
 import com.phatpl.metube.services.UserService;
 import com.phatpl.metube.utils.BuildResponse;
 import jakarta.validation.Valid;
@@ -26,17 +27,13 @@ public class RegisterController {
     }
 
     @PostMapping
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) throws AlreadyExistsException {
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
             return BuildResponse.badRequest(errors.get(0).getDefaultMessage());
         } else {
-            try {
-                var obj = userService.register(request);
-                return BuildResponse.created(obj);
-            } catch (Exception e) {
-                return BuildResponse.badRequest(e.getMessage());
-            }
+            var obj = userService.register(request);
+            return BuildResponse.created(obj);
         }
     }
 }

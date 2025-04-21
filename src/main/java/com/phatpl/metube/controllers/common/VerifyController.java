@@ -25,7 +25,7 @@ public class VerifyController {
     public ResponseEntity<?> verify(@RequestBody VerifyEmailRequest request) {
         try {
             return BuildResponse.ok(
-                    userService.activeUser(request.getMail(), request.getCode())
+                    userService.activeUser(request.getEmail(), request.getCode())
             );
         } catch (Exception e) {
             return BuildResponse.badRequest(e.getMessage());

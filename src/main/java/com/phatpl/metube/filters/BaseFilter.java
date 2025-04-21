@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 public class BaseFilter {
     private final Integer pageSize = Constant.PAGE_SIZE;
     private Integer pageNumber;
-
     public Pageable getPageable() {
         return PageRequest.of(pageNumber, pageSize);
     }

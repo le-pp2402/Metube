@@ -5,7 +5,7 @@ import com.phatpl.metube.dtos.request.SummarizeRequest;
 import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
 import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
 import com.phatpl.metube.dtos.response.ResourceResponse;
-import com.phatpl.metube.exceptions.UnauthorizationException;
+import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.filters.ResourcesFilter;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.services.GeminiService;
@@ -42,7 +42,7 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
     public ResponseEntity<?> upload(@ModelAttribute @Validate UploadResourceRequest request) {
         try {
             return BuildResponse.ok(resourceService.save(request));
-        } catch (UnauthorizationException e) {
+        } catch (AuthorizationException e) {
             return BuildResponse.unauthorized(e.getMessage());
         } catch (Exception e) {
             return BuildResponse.badRequest(e.getMessage());

@@ -2,7 +2,7 @@ package com.phatpl.metube.services.livestream;
 
 import com.phatpl.metube.dtos.request.livestream.InititalizeStreamingRequest;
 import com.phatpl.metube.dtos.response.LiveSessionResponse;
-import com.phatpl.metube.exceptions.UnauthorizationException;
+import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.filters.BaseFilter;
 import com.phatpl.metube.mappers.LiveSessionMapper;
 import com.phatpl.metube.models.LiveSession;
@@ -30,23 +30,21 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
     public LiveSessionResponse createLiveSession(InititalizeStreamingRequest request) {
         var userId = userService.extractUserId();
         if (userId == null) {
-            throw new UnauthorizationException();
+            throw new AuthorizationException();
         }
 
         var user = userService.findById(userId);
 
-        var liveSession = user.getLiveSession();
-
-        if (liveSession == null) {
-            liveSession = new LiveSession();
-            liveSession.setUser(user);
-            liveSession.setViewCount(0L);
-            liveSession.setPath(user.getUsername() + ".m3u8");
-        }
+        var liveSession = liveSessionRepository.findByUserId(user.getId()).orElse(
+                LiveSession.builder()
+                        .path(user.getUsername() + ".m3u8")
+                        .viewCount(0L)
+                        .user(user)
+                        .build()
+        );
 
         liveSession.setTitle(request.title);
         liveSession = liveSessionRepository.save(liveSession);
-
         return liveSessionMapper.toDTO(liveSession);
     }
 

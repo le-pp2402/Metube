@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VerifyEmailRequest {
-    private String mail;
-    private Integer code;
+    private String email;
+    private String code;
 }

@@ -5,7 +5,7 @@ import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
 import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
 import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
-import com.phatpl.metube.exceptions.UnauthorizationException;
+import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.filters.ResourcesFilter;
 import com.phatpl.metube.mappers.ResourceResponseMapper;
 import com.phatpl.metube.models.Resource;
@@ -63,7 +63,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
     // upload video to minio
     public ResourceResponse save(UploadResourceRequest req) throws Exception {
         var userid = userService.extractUserId();
-        var user = userRepository.findById(userid).orElseThrow(UnauthorizationException::new);
+        var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
         String contextType = req.getVideo().getContentType();
 
         Resource resource = new Resource();

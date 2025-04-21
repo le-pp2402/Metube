@@ -32,8 +32,4 @@ public class User extends BaseModel {
     String streamKey = "!@#$%^&*)(*&HHDS123";
 
     Integer code;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    LiveSession liveSession;
-
 }

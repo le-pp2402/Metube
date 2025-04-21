@@ -1,11 +1,13 @@
 package com.phatpl.metube.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name="live_session")
 public class LiveSession extends BaseModel {
@@ -14,7 +16,6 @@ public class LiveSession extends BaseModel {
     private String path;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 }
