@@ -35,6 +35,5 @@ build/
 
 
 ### PROJECT ###
-*.properties
 
 application.env
