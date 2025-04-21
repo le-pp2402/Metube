@@ -1,6 +1,7 @@
 package com.phatpl.metube.controllers.video;
 
 import com.phatpl.metube.dtos.request.GetStorageResourceReq;
+import com.phatpl.metube.dtos.request.video.UploadResourceReq;
 import com.phatpl.metube.services.MinIOService;
 import io.minio.errors.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,14 @@ public class GeneratePreSignedUrl {
         this.minIOService = minIOService;
     }
 
-    @PostMapping
-    public ResponseEntity<?> generatePreSignedUrl(@RequestBody GetStorageResourceReq request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    @PostMapping("/download")
+    public ResponseEntity<?> generateDownloadPreSignedUrl(@RequestBody GetStorageResourceReq request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         var url = minIOService.getPreSignedURL(request.resourcePath, request.bucket);
         return ResponseEntity.ok(url);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> generateUploadPresignedUrl(@RequestBody UploadResourceReq request) {
+        return null;
     }
 }

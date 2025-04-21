@@ -4,6 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,16 +12,19 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Service
-public class RabbitMQService {
+public class RabbitMQTranscodingService {
 
-    @Value("${QUEUE_HOST}")
-    private String HOST;
+
+    ConnectionFactory connectionFactory;
+
+    @Autowired
+    public RabbitMQTranscodingService(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
     public void SendMessage(Integer id, String queueName) {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(HOST);
 
-        try (Connection connection = factory.newConnection(); Channel channel = connection.createChannel()) {
+        try (Connection connection = connectionFactory.newConnection(); Channel channel = connection.createChannel()) {
             /*
                 queue: name of queue
                 durable: true if we are declaring a durable queue (the queue will survive a server restart)

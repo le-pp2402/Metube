@@ -45,10 +45,10 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
     UserRepository userRepository;
     MeliSearchService meliSearchService;
     UserService userService;
-    RabbitMQService rabbitMQService;
+    RabbitMQTranscodingService rabbitMQTranscodingService;
 
     @Autowired
-    public ResourceService(ResourceRepository resourceRepository, ResourceResponseMapper resourceResponseMapper, MinIOService minIOService, UserRepository userRepository, MeliSearchService meliSearchService, Index index, UserService userService, RabbitMQService rabbitMQService) {
+    public ResourceService(ResourceRepository resourceRepository, ResourceResponseMapper resourceResponseMapper, MinIOService minIOService, UserRepository userRepository, MeliSearchService meliSearchService, Index index, UserService userService, RabbitMQTranscodingService rabbitMQTranscodingService) {
         super(resourceResponseMapper, resourceRepository);
         this.resourceRepository = resourceRepository;
         this.resourceResponseMapper = resourceResponseMapper;
@@ -56,7 +56,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         this.userRepository = userRepository;
         this.meliSearchService = meliSearchService;
         this.userService = userService;
-        this.rabbitMQService = rabbitMQService;
+        this.rabbitMQTranscodingService = rabbitMQTranscodingService;
     }
 
 
@@ -80,7 +80,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
             var newElem = resourceRepository.save(resource);
             meliSearchService.addDocument(newElem.getId(), newElem.getTitle(), newElem.getCreatedAt(), newElem.getIsPrivate());
 
-            rabbitMQService.SendMessage(newElem.getId(), Constant.VIDEO_TRANSCODING_QUEUE);
+            rabbitMQTranscodingService.SendMessage(newElem.getId(), Constant.VIDEO_TRANSCODING_QUEUE);
 
             return resourceResponseMapper.toDTO(newElem);
         } else {

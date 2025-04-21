@@ -26,4 +26,6 @@ public interface ResourceRepository extends BaseRepository<Resource, ResourcesFi
 
 
     Integer getViewCountById(Integer id);
+
+    Optional<Resource> findByVideo(String path);
 }
