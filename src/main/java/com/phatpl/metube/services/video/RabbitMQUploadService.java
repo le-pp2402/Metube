@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -24,9 +22,10 @@ public class RabbitMQUploadService implements Runnable {
     private ResourceRepository resourceRepository;
 
     @Autowired
-    public RabbitMQUploadService(ConnectionFactory connectionFactory) {
+    public RabbitMQUploadService(ConnectionFactory connectionFactory, RabbitMQTranscodingService rabbitMQTranscodingService, ResourceRepository resourceRepository) {
         this.connectionFactory = connectionFactory;
-
+        this.rabbitMQTranscodingService = rabbitMQTranscodingService;
+        this.resourceRepository = resourceRepository;
     }
 
     @Override
@@ -67,7 +66,8 @@ public class RabbitMQUploadService implements Runnable {
         var resource = resourceRepository.findByVideo(path);
         if (resource.isPresent()) {
             rabbitMQTranscodingService.SendMessage(resource.get().getId(), Constant.VIDEO_TRANSCODING_QUEUE);
+        } else {
+            log.info("Resource not found: {}", path);
         }
     }
-
 }

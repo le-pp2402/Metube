@@ -105,13 +105,22 @@ public class MinIOService {
         minioClient.removeObject(removeObjectArgs);
     }
 
-    public String getPreSignedURL(String file, String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+
+    public String genPreSignedUrl(String file, String bucketName, Method method, int duration, TimeUnit unit) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         return minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
-                        .method(Method.GET)
+                        .method(method)
                         .bucket(bucketName)
                         .object(file)
-                        .expiry(5, TimeUnit.MINUTES)
+                        .expiry(duration, unit)
                         .build());
+    }
+
+    public String genGetPreSignedURL(String file, String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return genPreSignedUrl(file, bucketName, Method.GET, 5, TimeUnit.MINUTES);
+    }
+
+    public String genUploadPresignedUrl(String file, String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return genPreSignedUrl(file, bucketName, Method.PUT, 3, TimeUnit.HOURS);
     }
 }

@@ -1,5 +1,7 @@
 package com.phatpl.metube.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class Constant {
     public static Integer VIDEO_SIZE = 10000000;
     public static Integer DEFAULT_SIZE = 100000;
@@ -23,4 +25,7 @@ public class Constant {
 
     public final static String VIDEO_TRANSCODING_QUEUE = "video-transcoding";
     public final static String SUBTITLE_GENERATE_QUEUE = "video-transcode";
+
+
+    public static String BUCKET = "resources";
 }
