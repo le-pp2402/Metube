@@ -58,13 +58,6 @@ The Nginx RTMP module (or FFmpeg):
 
   Other users can now watch the live stream through an HLS video player embedded in your website or app.
 
-
-TODO:
-
-Here's a well-structured **TODO list** in **Markdown** format with your tasks rewritten clearly in English and adjusted for clarity:
-
----
-
 ## ✅ TODO List 
 * [ ] **Integrate CDN support**
   Set up a Content Delivery Network (use CloudFront) to serve HLS (`.m3u8`/`.ts`) files efficiently to end users.
