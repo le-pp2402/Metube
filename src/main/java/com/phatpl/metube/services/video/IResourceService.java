@@ -1,8 +1,9 @@
 package com.phatpl.metube.services.video;
 
-import com.phatpl.metube.dtos.request.video.UploadResourceReq;
+import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
+import com.phatpl.metube.dtos.response.PresignUrlResponse;
 import com.phatpl.metube.dtos.response.ResourceResponse;
 
 public interface IResourceService {
-    ResourceResponse save(UploadResourceReq req, String path) throws Exception;
+    PresignUrlResponse save(UploadResourceRequest req) throws Exception;
 }

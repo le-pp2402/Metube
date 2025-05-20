@@ -1,10 +1,10 @@
 package com.phatpl.metube.models;
 
+import com.phatpl.metube.models.enums.ResourceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +22,20 @@ public class Resource extends BaseModel {
     String video;
     String thumbnail;
     Boolean isPrivate;
-    Boolean isReady;
-
-    @ColumnDefault(value = "0")
-    Integer viewCount;
+    ResourceStatus status;
 
     @Column(columnDefinition = "LONGTEXT")
-    String summarize;
+    String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
 
+    @ColumnDefault(value = "0")
+    Integer viewCount;
+
+    @ColumnDefault(value = "0")
+    Integer likeCount;
 
     @OneToMany(
             cascade = CascadeType.REMOVE,

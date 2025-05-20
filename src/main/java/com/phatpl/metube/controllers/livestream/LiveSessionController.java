@@ -6,6 +6,7 @@ import com.phatpl.metube.utils.BuildResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,17 +21,29 @@ public class LiveSessionController {
 
     @GetMapping
     public ResponseEntity<?> getLiveSessions() {
-        var liveSessions = liveSessionService.findAllDTO();
+        var liveSessions = liveSessionService.getAllAccessibleLiveSession();
         return BuildResponse.ok(liveSessions);
     }
 
-    @PostMapping
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/start")
     public ResponseEntity<?> createLiveSession(@RequestBody InititalizeStreamingRequest request) {
         try {
             var res = liveSessionService.createLiveSession(request);
             return BuildResponse.ok(res);
         } catch (Exception e) {
             return BuildResponse.badRequest(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/stop")
+    public ResponseEntity<?> stopLiveSession() {
+        try {
+            liveSessionService.stopLiveSession();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return BuildResponse.unauthorized(e.getMessage());
         }
     }
 

@@ -12,6 +12,8 @@ import com.phatpl.metube.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LiveSessionService extends BaseService<LiveSession, LiveSessionResponse, BaseFilter, Integer> {
 
@@ -45,10 +47,42 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
 
         liveSession.setTitle(request.title);
         liveSession = liveSessionRepository.save(liveSession);
+        liveSession.setAccessible(true);
         return liveSessionMapper.toDTO(liveSession);
+    }
+
+    public void stopLiveSession() {
+        var userId = userService.extractUserId();
+
+        if (userId == null) {
+            throw new AuthorizationException();
+        }
+
+        var liveSsOtp = liveSessionRepository.findByUserId(userId);
+
+        if (liveSsOtp.isPresent()) {
+            var liveSs = liveSsOtp.get();
+            liveSs.setAccessible(false);
+            liveSessionRepository.save(liveSs);
+        }
+    }
+
+    public void stopLiveSessionByUserId(int userId) {
+        var liveSsOtp = liveSessionRepository.findByUserId(userId);
+
+        if (liveSsOtp.isPresent()) {
+            var liveSs = liveSsOtp.get();
+            liveSs.setAccessible(false);
+            liveSessionRepository.save(liveSs);
+        }
     }
 
     public void deleteByUserId(Integer userId) {
         liveSessionRepository.deleteAllByUserId(userId);
+    }
+
+    public List<LiveSessionResponse> getAllAccessibleLiveSession() {
+        var result = liveSessionRepository.findLiveSessionByIsAccessible(true);
+        return liveSessionMapper.toListDTO(result);
     }
 }

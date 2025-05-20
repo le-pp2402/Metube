@@ -2,6 +2,7 @@ package com.phatpl.metube.repositories;
 
 import com.phatpl.metube.filters.ResourcesFilter;
 import com.phatpl.metube.models.Resource;
+import com.phatpl.metube.models.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,6 @@ public interface ResourceRepository extends BaseRepository<Resource, ResourcesFi
     Integer getViewCountById(Integer id);
 
     Optional<Resource> findByVideo(String path);
+
+    List<Resource> findByUser(User user);
 }

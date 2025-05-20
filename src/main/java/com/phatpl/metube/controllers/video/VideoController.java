@@ -50,39 +50,19 @@ public class VideoController {
         }
     }
 
-//    @GetMapping("/{folder}/video/{file}")
-//    public ResponseEntity<?> loadVideo(@PathVariable("folder") String folder,
-//                                    @PathVariable("file") String file) {
-//        try {
-//            var response = resourceService.getVideo(folder, file);
-//            byte[] resource = response.readAllBytes();
-//            HttpHeaders httpHeaders = new HttpHeaders();
-//            httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-//            return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return BuildResponse.badRequest(e.getMessage());
-//        }
-//    }
-//
-//    @GetMapping("/{folder}/x/{file}")
-//    public ResponseEntity<?> loadSubtitle(@PathVariable("folder") String folder,
-//                                       @PathVariable("file") String file) {
-//        try {
-//            var response = resourceService.getSubtitle(folder, file);
-//            byte[] resource = response.readAllBytes();
-//            HttpHeaders httpHeaders = new HttpHeaders();
-//            httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
-//            return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return BuildResponse.badRequest(e.getMessage());
-//        }
-//    }
-//    @GetMapping("/{folder}/thumbnail")
-//    public ResponseEntity loadThumbnail(@PathVariable("folder") String folder)
-//            throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException {
-//        var response = minIOService.getImage(folder + "/thumbnail");
-//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(response.readAllBytes());
-//    }
+    @GetMapping("/{folder}/video/{file}")
+    public ResponseEntity<?> loadVideo(@PathVariable("folder") String folder,
+                                    @PathVariable("file") String file) {
+        try {
+            var response = resourceService.getVideo(folder, file);
+            byte[] resource = response.readAllBytes();
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+            return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
+        } catch (Exception e) {
+            return BuildResponse.badRequest(e.getMessage());
+        }
+    }
 
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")

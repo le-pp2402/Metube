@@ -10,16 +10,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/*
+    chứa các request cho nginx-rtmp tương tác với server
+
+    xác thực stream key, và ngắt kết nối stream key
+ */
 @Slf4j
 @RestController
 @RequestMapping("/live")
-public class StreamingControler {
+public class NginxRtmpController {
 
     private final LiveSessionService liveSessionService;
     private final UserService userService;
 
     @Autowired
-    public StreamingControler(UserService userService, ResourceService resourceService, LiveSessionService liveSessionService) {
+    public NginxRtmpController(UserService userService, ResourceService resourceService, LiveSessionService liveSessionService) {
         this.userService = userService;
         this.liveSessionService = liveSessionService;
     }

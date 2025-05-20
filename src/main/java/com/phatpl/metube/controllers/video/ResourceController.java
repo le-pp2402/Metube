@@ -49,17 +49,18 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
         }
     }
 
-    @Override
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findById(@PathVariable Integer id) {
-        try {
-            return BuildResponse.ok(resourceService.findDTOById(id));
-        } catch (EntityNotFoundException e) {
-            return BuildResponse.notFound(e.getMessage());
-        } catch (RuntimeException e) {
-            return BuildResponse.badRequest(e.getMessage());
-        }
-    }
+//    @Override
+//    @GetMapping("/{id}")
+//    public ResponseEntity<?> findById(@PathVariable Integer id) {
+//        try {
+//            return BuildResponse.ok(resourceService.findDTOById(id));
+//        } catch (EntityNotFoundException e) {
+//            return BuildResponse.notFound(e.getMessage());
+//        } catch (RuntimeException e) {
+//            return BuildResponse.badRequest(e.getMessage());
+//        }
+//    }
+
 
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     @DeleteMapping("/{id}")
@@ -70,6 +71,13 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
         } catch (Exception e) {
             return BuildResponse.badRequest(e.getMessage());
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> findAll() {
+        return BuildResponse.ok(
+            resourceService.findAll()
+        );
     }
 
     @Override

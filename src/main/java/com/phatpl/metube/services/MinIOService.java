@@ -21,7 +21,7 @@ public class MinIOService {
     private final MinioClient minioClient;
 
     @Value("${BUCKET_NAME}")
-    private String bucketName;
+    public String bucketName;
 
     @Autowired
     public MinIOService(MinioClient minioClient) {

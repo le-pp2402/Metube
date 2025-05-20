@@ -2,6 +2,7 @@ package com.phatpl.metube.configs;
 
 import com.phatpl.metube.models.User;
 import com.phatpl.metube.repositories.UserRepository;
+import com.phatpl.metube.services.video.RabbitMQUploadService;
 import com.phatpl.metube.utils.BCryptPassword;
 import com.phatpl.metube.utils.CustomUserDetail;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin(origins = "http://localhost:3000/")
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+    private final RabbitMQUploadService rabbitMQUploadService;
 
     // Lấy người người từ database lên bằng username để provider xác thực
     @Bean
@@ -66,6 +70,8 @@ public class ApplicationConfig {
                 user.setEmail("admin123@gmail.com");
                 userRepository.save(user);
             }
+
+            rabbitMQUploadService.run();
         };
     }
 

@@ -14,6 +14,7 @@ public class LiveSession extends BaseModel {
     private String title;
     private Long viewCount;
     private String path;
+    private boolean isAccessible;
 
     @OneToOne
     @JoinColumn(name = "user_id")

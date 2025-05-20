@@ -3,12 +3,16 @@ package com.phatpl.metube.services.video;
 import com.meilisearch.sdk.Index;
 import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
 import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
+import com.phatpl.metube.dtos.response.ResourceDetailDTO;
 import com.phatpl.metube.dtos.response.ResourceResponse;
+import com.phatpl.metube.dtos.response.PresignUrlResponse;
 import com.phatpl.metube.exceptions.BadRequestException;
 import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.filters.ResourcesFilter;
+import com.phatpl.metube.mappers.ResourceDetailMapper;
 import com.phatpl.metube.mappers.ResourceResponseMapper;
 import com.phatpl.metube.models.Resource;
+import com.phatpl.metube.models.enums.ResourceStatus;
 import com.phatpl.metube.repositories.ResourceRepository;
 import com.phatpl.metube.repositories.UserRepository;
 import com.phatpl.metube.services.BaseService;
@@ -17,6 +21,7 @@ import com.phatpl.metube.services.MinIOService;
 import com.phatpl.metube.services.UserService;
 import com.phatpl.metube.utils.Constant;
 import io.minio.errors.MinioException;
+import io.minio.http.Method;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -32,12 +37,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
 @Transactional
-public class ResourceService extends BaseService<Resource, ResourceResponse, ResourcesFilter, Integer> {
+public class ResourceService extends BaseService<Resource, ResourceResponse, ResourcesFilter, Integer> implements IResourceService {
 
     ResourceRepository resourceRepository;
     ResourceResponseMapper resourceResponseMapper;
@@ -45,10 +51,16 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
     UserRepository userRepository;
     MeliSearchService meliSearchService;
     UserService userService;
-    RabbitMQTranscodingService rabbitMQTranscodingService;
+    ResourceDetailMapper resourcesDetailMapper;
 
     @Autowired
-    public ResourceService(ResourceRepository resourceRepository, ResourceResponseMapper resourceResponseMapper, MinIOService minIOService, UserRepository userRepository, MeliSearchService meliSearchService, Index index, UserService userService, RabbitMQTranscodingService rabbitMQTranscodingService) {
+    public ResourceService(ResourceRepository resourceRepository,
+                           ResourceResponseMapper resourceResponseMapper,
+                           MinIOService minIOService,
+                           UserRepository userRepository,
+                           MeliSearchService meliSearchService,
+                           UserService userService,
+                           ResourceDetailMapper resourcesDetailMapper) {
         super(resourceResponseMapper, resourceRepository);
         this.resourceRepository = resourceRepository;
         this.resourceResponseMapper = resourceResponseMapper;
@@ -56,47 +68,43 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         this.userRepository = userRepository;
         this.meliSearchService = meliSearchService;
         this.userService = userService;
-        this.rabbitMQTranscodingService = rabbitMQTranscodingService;
+        this.resourcesDetailMapper = resourcesDetailMapper;
     }
 
-
-    // upload video to minio
-    public ResourceResponse save(UploadResourceRequest req) throws Exception {
+    
+    public PresignUrlResponse save(UploadResourceRequest req) throws Exception {
         var userid = userService.extractUserId();
         var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
-        String contextType = req.getVideo().getContentType();
+
+        String baseDir = String.valueOf(System.currentTimeMillis());
+        String fileName = "Video_" + user.getUsername() + "_" + System.currentTimeMillis();
+        String filePath = baseDir + "/video/" + fileName;
+
+        String uploadUrl = minIOService.genPreSignedUrl(
+            filePath,
+            Constant.BUCKET,
+            Method.PUT,
+            3,
+            TimeUnit.HOURS
+        );
 
         Resource resource = new Resource();
         resource.setTitle(req.getTitle());
-        resource.setIsPrivate(false);
+
+        resource.setIsPrivate(true);
+        resource.setStatus(ResourceStatus.UPLOADING);
+
         resource.setUser(user);
-        resource.setIsReady(false);
+        resource.setLikeCount(0);
+        resource.setViewCount(0);
+        resource.setVideo(filePath);
 
-        if (contextType != null && contextType.startsWith("video")) {
-            var mediaInfo = uploadVideo(req.getVideo());
+        resourceRepository.save(resource);
 
-            resource.setVideo(mediaInfo.get("video"));
-
-            var newElem = resourceRepository.save(resource);
-            meliSearchService.addDocument(newElem.getId(), newElem.getTitle(), newElem.getCreatedAt(), newElem.getIsPrivate());
-
-            rabbitMQTranscodingService.SendMessage(newElem.getId(), Constant.VIDEO_TRANSCODING_QUEUE);
-
-            return resourceResponseMapper.toDTO(newElem);
-        } else {
-            throw new BadRequestException(Constant.INVALID_FORMAT_FILE);
-        }
+        return new PresignUrlResponse(uploadUrl);
     }
 
-    // upload video to minio
-    private HashMap<String, String> uploadVideo(MultipartFile video) throws Exception {
-        var baseDir = String.valueOf(System.currentTimeMillis());
-        var mediaInfo = new HashMap<String, String>();
-        var path = minIOService.uploadVideo(video.getInputStream(), baseDir + "/video/" + "video", video.getContentType());
-        mediaInfo.put("video", path);
-        return mediaInfo;
-    }
-
+    
     // https://www.meilisearch.com/docs/reference/api/search#search-parameters
     public List<ResourceResponse> search(ResourcesFilter request) {
         var results = meliSearchService.search(request.getSearchRequest()).getHits();
@@ -118,7 +126,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
-
     }
 
     public void deleteAll() {
@@ -162,7 +169,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
 
     public ResourceResponse setSummarize(Integer id, String summarize) {
         var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        resource.setSummarize(summarize);
+        resource.setDescription(summarize);
         return resourceResponseMapper.toDTO(resource);
     }
 
@@ -173,5 +180,23 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Res
 
     public Integer getViewCount(Integer id) {
         return resourceRepository.getViewCountById(id);
+    }
+
+    public List<ResourceResponse> getUserContent() {
+        var userid = userService.extractUserId();
+        var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
+        var resources = resourceRepository.findByUser(user);
+        return resourceResponseMapper.toListDTO(resources);
+    }
+
+
+    public ResourceDetailDTO getUserContentById(Integer id) {
+        var userid = userService.extractUserId();
+        var resources = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        if (!resources.getUser().getId().equals(userid)) {
+            throw new AuthorizationException();
+        }
+        return resourcesDetailMapper.toDTO(resources);
     }
 }

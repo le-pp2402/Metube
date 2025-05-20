@@ -27,5 +27,4 @@ public class BaseModel {
     private Timestamp createdAt;
     @UpdateTimestamp
     private Timestamp updatedAt;
-
 }

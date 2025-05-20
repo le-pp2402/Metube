@@ -13,7 +13,4 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadResourceRequest {
     @NotNull(message = "Title " + Constant.NOT_NULL)
     public String title;
-
-    @NotNull(message = "Video " + Constant.NOT_NULL)
-    public MultipartFile video;
 }

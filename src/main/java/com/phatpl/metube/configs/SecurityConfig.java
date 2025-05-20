@@ -28,7 +28,7 @@ public class SecurityConfig {
     @Value("${SECRET_KEY}")
     private String secretKey;
     private final String[] GET_PERMIT_ALL_URL = { "/groups", "/words/{spring:[0-9]+}", "/resources", "/resources/{spring:[0-9]+}", "/video/**", "/video", "/live/**", "/ws/**", "/ws", "/live", "/live-session", "/live-session/**"};
-    private final String[] POST_PERMIT_ALL_URL = {"/register", "/words/w/**", "/resources", "/video/**", "/live", "/live/**", "/login"};
+    private final String[] POST_PERMIT_ALL_URL = {"/register", "/words/w/**", "/resources", "/video/**", "/live", "/live/**", "/login", "/video"};
     private final String[] PUT_PERMIT_ALL_URL = {"/verify"};
 
     private final AuthenticationProvider authenticationProvider;
