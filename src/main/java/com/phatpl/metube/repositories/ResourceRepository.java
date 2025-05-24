@@ -1,6 +1,6 @@
 package com.phatpl.metube.repositories;
 
-import com.phatpl.metube.filters.ResourcesFilter;
+import com.phatpl.metube.filters.BaseFilter;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.models.User;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ResourceRepository extends BaseRepository<Resource, ResourcesFilter, Integer> {
+public interface ResourceRepository extends BaseRepository<Resource, BaseFilter, Integer> {
     @NotNull
     Optional<Resource> findById(@NotNull Integer id);
 

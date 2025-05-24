@@ -5,8 +5,6 @@ import com.phatpl.metube.models.LiveSession;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.factory.Mappers;
-
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface LiveSessionMapper extends BaseMapper<LiveSession, LiveSessionResponse> {

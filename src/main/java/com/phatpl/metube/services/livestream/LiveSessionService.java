@@ -46,8 +46,9 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
         );
 
         liveSession.setTitle(request.title);
-        liveSession = liveSessionRepository.save(liveSession);
         liveSession.setAccessible(true);
+
+        liveSession = liveSessionRepository.save(liveSession);
         return liveSessionMapper.toDTO(liveSession);
     }
 
@@ -58,16 +59,6 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
             throw new AuthorizationException();
         }
 
-        var liveSsOtp = liveSessionRepository.findByUserId(userId);
-
-        if (liveSsOtp.isPresent()) {
-            var liveSs = liveSsOtp.get();
-            liveSs.setAccessible(false);
-            liveSessionRepository.save(liveSs);
-        }
-    }
-
-    public void stopLiveSessionByUserId(int userId) {
         var liveSsOtp = liveSessionRepository.findByUserId(userId);
 
         if (liveSsOtp.isPresent()) {

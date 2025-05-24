@@ -6,9 +6,8 @@ import com.phatpl.metube.dtos.request.video.UpdateResourceRequest;
 import com.phatpl.metube.dtos.request.video.UploadResourceRequest;
 import com.phatpl.metube.dtos.response.ResourceResponse;
 import com.phatpl.metube.exceptions.AuthorizationException;
-import com.phatpl.metube.filters.ResourcesFilter;
+import com.phatpl.metube.filters.BaseFilter;
 import com.phatpl.metube.models.Resource;
-import com.phatpl.metube.services.GeminiService;
 import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.utils.BuildResponse;
 import io.minio.errors.MinioException;
@@ -27,12 +26,12 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 @RestController
 @RequestMapping("/resources")
-public class ResourceController extends BaseController<Resource, ResourceResponse, ResourcesFilter, Integer> {
+public class ResourceController extends BaseController<Resource, ResourceResponse, BaseFilter, Integer> {
 
     private final ResourceService resourceService;
 
     @Autowired
-    public ResourceController(ResourceService resourceService, GeminiService geminiService) {
+    public ResourceController(ResourceService resourceService) {
         super(resourceService);
         this.resourceService = resourceService;
     }
@@ -82,10 +81,10 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
 
     @Override
     @PostMapping
-    public ResponseEntity<?> findAll(@RequestBody ResourcesFilter request) {
+    public ResponseEntity<?> findAll(@RequestBody BaseFilter request) {
         try {
             return BuildResponse.ok(
-                    resourceService.search(request)
+                "Chưa implement"
             );
         } catch (RuntimeException e) {
             return BuildResponse.badRequest(e.getMessage());
