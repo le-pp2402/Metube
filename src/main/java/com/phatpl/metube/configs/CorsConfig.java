@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
 
-                String[] allowedOrigins = new String[]{"http://localhost:3000", "http://localhost:81"} ;
+                String[] allowedOrigins = new String[]{"http://localhost:3000", "http://localhost:81", "https://pphatdev.tech/"} ;
 
                 registry
                         .addMapping("/**")
