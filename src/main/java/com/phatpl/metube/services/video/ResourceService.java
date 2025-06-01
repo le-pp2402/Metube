@@ -25,6 +25,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,8 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
     UserRepository userRepository;
     UserService userService;
     ResourceDetailMapper resourcesDetailMapper;
+    String OldPattern;
+    String NewPattern;
 
     @Autowired
     public ResourceService(ResourceRepository resourceRepository,
@@ -53,7 +56,9 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
                            MinIOService minIOService,
                            UserRepository userRepository,
                            UserService userService,
-                           ResourceDetailMapper resourcesDetailMapper) {
+                           ResourceDetailMapper resourcesDetailMapper,
+                           @Value("MINIO_URL_OLD_PATTERN") String oldPattern,
+                           @Value("MINIO_URL_NEW_PATTERN") String newPattern) {
         super(resourceResponseMapper, resourceRepository);
         this.resourceRepository = resourceRepository;
         this.resourceResponseMapper = resourceResponseMapper;
@@ -61,6 +66,8 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         this.userRepository = userRepository;
         this.userService = userService;
         this.resourcesDetailMapper = resourcesDetailMapper;
+        OldPattern = oldPattern;
+        NewPattern = newPattern;
     }
 
     
@@ -93,6 +100,9 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
 
         resourceRepository.save(resource);
 
+        log.info("Old uploading link is {}", uploadUrl);
+        uploadUrl = uploadUrl.replace(OldPattern, NewPattern);
+        log.info("New Uploading link is {}", uploadUrl);
         return new PresignUrlResponse(uploadUrl);
     }
 
