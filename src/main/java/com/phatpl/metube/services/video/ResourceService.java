@@ -99,10 +99,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         resource.setVideo(filePath);
 
         resourceRepository.save(resource);
-
-        log.info("Old uploading link is {}", uploadUrl);
-        uploadUrl = uploadUrl.replace(OldPattern, NewPattern);
-        log.info("New Uploading link is {}", uploadUrl);
         return new PresignUrlResponse(uploadUrl);
     }
 
