@@ -3,6 +3,7 @@ package com.phatpl.metube.repositories;
 import com.phatpl.metube.filters.BaseFilter;
 import com.phatpl.metube.models.Resource;
 import com.phatpl.metube.models.User;
+import com.phatpl.metube.models.enums.ResourceStatus;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +31,6 @@ public interface ResourceRepository extends BaseRepository<Resource, BaseFilter,
 
     Optional<Resource> findByVideo(String path);
 
-    List<Resource> findByUser(User user);
+    List<Resource> findByUserAndTitleContainsIgnoreCase(User user, String title);
+    List<Resource> findByTitleContainsIgnoreCaseAndIsPrivate(String title, Boolean isPrivate);
 }

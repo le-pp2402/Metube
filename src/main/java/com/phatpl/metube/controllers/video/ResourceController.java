@@ -73,9 +73,9 @@ public class ResourceController extends BaseController<Resource, ResourceRespons
     }
 
     @GetMapping
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAll(String searchPattern) {
         return BuildResponse.ok(
-            resourceService.findAll()
+            resourceService.findAll(searchPattern)
         );
     }
 

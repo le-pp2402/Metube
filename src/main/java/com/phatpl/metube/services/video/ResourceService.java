@@ -167,10 +167,10 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         return resourceRepository.getViewCountById(id);
     }
 
-    public List<ResourceResponse> getUserContent() {
+    public List<ResourceResponse> getUserContent(String searchPattern) {
         var userid = userService.extractUserId();
         var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
-        var resources = resourceRepository.findByUser(user);
+        var resources = resourceRepository.findByUserAndTitleContainsIgnoreCase(user, searchPattern);
         return resourceResponseMapper.toListDTO(resources);
     }
 
@@ -183,5 +183,10 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
             throw new AuthorizationException();
         }
         return resourcesDetailMapper.toDTO(resources);
+    }
+
+    public List<ResourceResponse> findAll(String searchPattern) {
+        var resources = resourceRepository.findByTitleContainsIgnoreCaseAndIsPrivate(searchPattern, false);
+        return resourceResponseMapper.toListDTO(resources);
     }
 }

@@ -25,7 +25,6 @@ public class LiveSessionController {
         return BuildResponse.ok(liveSessions);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/start")
     public ResponseEntity<?> createLiveSession(@RequestBody InititalizeStreamingRequest request) {
         try {
@@ -36,7 +35,6 @@ public class LiveSessionController {
         }
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/stop")
     public ResponseEntity<?> stopLiveSession() {
         try {

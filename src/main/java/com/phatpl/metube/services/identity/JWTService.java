@@ -25,7 +25,7 @@ public class JWTService {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
-                .issuer("learnvocabulary")
+                .issuer("Metube")
                 .issueTime(new Date(System.currentTimeMillis()))
                 .expirationTime(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .claim("data", user)
