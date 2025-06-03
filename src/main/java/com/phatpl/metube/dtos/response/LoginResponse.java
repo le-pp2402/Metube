@@ -13,6 +13,5 @@ public class LoginResponse extends BaseDTO {
     private String email;
     @JsonProperty("is_admin")
     private Boolean isAdmin;
-    private Integer elo;
     private String token;
 }

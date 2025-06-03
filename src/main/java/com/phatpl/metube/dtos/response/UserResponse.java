@@ -13,5 +13,4 @@ public class UserResponse extends BaseDTO {
     private String email;
     @JsonProperty("is_admin")
     private Boolean isAdmin;
-    private Integer elo;
 }

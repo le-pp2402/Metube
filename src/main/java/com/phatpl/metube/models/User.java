@@ -24,9 +24,7 @@ public class User extends BaseModel {
 
     @Column(updatable = false)
     Boolean isAdmin = false;
-    Integer elo = 0;
     Boolean activated = false;
-
 
     @Column(name = "StreamKey")
     String streamKey = "!@#$%^&*)(*&HHDS123";
