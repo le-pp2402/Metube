@@ -9,8 +9,10 @@ import com.phatpl.metube.mappers.LoginResponseMapper;
 import com.phatpl.metube.services.identity.AuthService;
 import com.phatpl.metube.services.identity.GoogleAuthService;
 import com.phatpl.metube.services.identity.JWTService;
+import com.phatpl.metube.utils.BuildResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,18 +23,16 @@ import java.util.Collections;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class GoogleAuthController {
 
-    private final LoginResponseMapper loginResponseMapper;
+    @Autowired
     private GoogleAuthService googleAuthService;
-    private JWTService jwtService;
 
     @PostMapping("/google")
     public ResponseEntity<?> authenticateGoogle(@RequestBody GoogleTokenRequest request) {
         try {
             var userResponse = googleAuthService.verify(request.getGgToken());
-            return ResponseEntity.ok(userResponse);
+            return BuildResponse.ok(userResponse);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body("Invalid Google Token");
