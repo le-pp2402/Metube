@@ -149,6 +149,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
     public List<ResourceResponse> getUserContent(String searchPattern) {
         var userid = userService.extractUserId();
         var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
+        if (searchPattern == null) searchPattern = "";
         var resources = resourceRepository.findByUserAndTitleContainsIgnoreCase(user, searchPattern);
         return resourceResponseMapper.toListDTO(resources);
     }
