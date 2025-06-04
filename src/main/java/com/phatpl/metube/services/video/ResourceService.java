@@ -33,6 +33,7 @@ import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -115,15 +116,22 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         }
     }
 
-    public void deleteAll() {
-        resourceRepository.deleteAll();
-    }
-
-    public ResourceResponse update(UpdateResourceRequest request, Integer id) throws IOException, NoSuchAlgorithmException, InvalidKeyException, MinioException {
+    public boolean update(UpdateResourceRequest request, Integer id) throws IOException, NoSuchAlgorithmException, InvalidKeyException, MinioException {
+        log.info("[WORKSPACE CONTROLLER -> RESOURCES SERVICE]: {}", id.toString());
         var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        if (!Objects.equals(resource.getUser().getId(), id)) {
+            throw new AuthorizationException();
+        }
+
+        if (resource.getStatus() != ResourceStatus.READY) {
+            return false;
+        }
+
         resource.setTitle(request.getTitle());
         resource.setIsPrivate(request.getIsPrivate());
-        return resourceResponseMapper.toDTO(resource);
+        resource.setDescription(request.getDescription());
+        return true;
     }
 
     public InputStream getVideo(String folder, String file) throws Exception {
@@ -132,35 +140,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
 
     public InputStream getSubtitle(String folder, String file) throws Exception {
         return minIOService.getFile(folder + "/subtitle/" + file);
-    }
-
-//    public String readSubFile(Integer id) throws Exception {
-//        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-//        var input = minIOService.getFile(resource.getEnSub());
-//
-//        var summarize = new StringBuilder();
-//        try (Reader reader = new BufferedReader(new InputStreamReader
-//                (input, StandardCharsets.UTF_8))) {
-//            int c = 0;
-//            while ((c = reader.read()) != -1) {
-//                if (Character.isLetter(c) || Character.isSpaceChar(c) || Character.isDigit(c))
-//                    summarize.append((char) c);
-//                else
-//                    summarize.append(' ');
-//            }
-//        }
-//        return summarize.toString();
-//    }
-
-    public ResourceResponse setSummarize(Integer id, String summarize) {
-        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        resource.setDescription(summarize);
-        return resourceResponseMapper.toDTO(resource);
-    }
-
-
-    public ResourceResponse save(String streamKey, String fileName) {
-        return null;
     }
 
     public Integer getViewCount(Integer id) {

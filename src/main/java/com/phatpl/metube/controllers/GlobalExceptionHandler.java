@@ -2,6 +2,7 @@ package com.phatpl.metube.controllers;
 
 import com.phatpl.metube.dtos.ErrorResponse;
 import com.phatpl.metube.exceptions.AlreadyExistsException;
+import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.exceptions.NotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,15 @@ public class GlobalExceptionHandler {
                 exception.getMessage()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(AlreadyExistsException exception) {
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                exception.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

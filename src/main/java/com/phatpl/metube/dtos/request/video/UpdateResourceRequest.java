@@ -14,4 +14,5 @@ public class UpdateResourceRequest {
     private String title;
     @JsonProperty("is_private")
     private Boolean isPrivate;
+    private String description;
 }
