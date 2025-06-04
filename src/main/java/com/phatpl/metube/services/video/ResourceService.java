@@ -48,18 +48,13 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
     UserRepository userRepository;
     UserService userService;
     ResourceDetailMapper resourcesDetailMapper;
-    String OldPattern;
-    String NewPattern;
-
     @Autowired
     public ResourceService(ResourceRepository resourceRepository,
                            ResourceResponseMapper resourceResponseMapper,
                            MinIOService minIOService,
                            UserRepository userRepository,
                            UserService userService,
-                           ResourceDetailMapper resourcesDetailMapper,
-                           @Value("MINIO_URL_OLD_PATTERN") String oldPattern,
-                           @Value("MINIO_URL_NEW_PATTERN") String newPattern) {
+                           ResourceDetailMapper resourcesDetailMapper) {
         super(resourceResponseMapper, resourceRepository);
         this.resourceRepository = resourceRepository;
         this.resourceResponseMapper = resourceResponseMapper;
@@ -67,8 +62,6 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         this.userRepository = userRepository;
         this.userService = userService;
         this.resourcesDetailMapper = resourcesDetailMapper;
-        OldPattern = oldPattern;
-        NewPattern = newPattern;
     }
 
     
@@ -119,8 +112,9 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
     public boolean update(UpdateResourceRequest request, Integer id) throws IOException, NoSuchAlgorithmException, InvalidKeyException, MinioException {
         log.info("[WORKSPACE CONTROLLER -> RESOURCES SERVICE]: {}", id.toString());
         var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        var ownerId = userService.extractUserId();
 
-        if (!Objects.equals(resource.getUser().getId(), id)) {
+        if (!Objects.equals(resource.getUser().getId(), ownerId)) {
             throw new AuthorizationException();
         }
 
@@ -131,6 +125,7 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         resource.setTitle(request.getTitle());
         resource.setIsPrivate(request.getIsPrivate());
         resource.setDescription(request.getDescription());
+        resourceRepository.save(resource);
         return true;
     }
 
@@ -166,7 +161,21 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
     }
 
     public List<ResourceResponse> findAll(String searchPattern) {
+        if (searchPattern == null) {
+            searchPattern = "";
+        }
         var resources = resourceRepository.findByTitleContainsIgnoreCaseAndIsPrivate(searchPattern, false);
         return resourceResponseMapper.toListDTO(resources);
+    }
+
+    @Override
+    public ResourceResponse findDTOById(Integer id) {
+        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        if (resource.getStatus() == ResourceStatus.READY && !resource.getIsPrivate()) {
+            return resourceResponseMapper.toDTO(resource);
+        }
+
+        throw new AuthorizationException();
     }
 }

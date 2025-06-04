@@ -39,7 +39,7 @@ public class WorkspaceController {
     }
 
     @PutMapping("/content/{id}")
-    public ResponseEntity<?> updateUserContentById(@PathVariable Integer id, @RequestBody UpdateResourceRequest request) {
+    public ResponseEntity<?> updateUserContentById(@PathVariable("id") Integer id, @RequestBody UpdateResourceRequest request) {
         try {
             if (resourceService.update(request, id)) {
                 return BuildResponse.ok(true);

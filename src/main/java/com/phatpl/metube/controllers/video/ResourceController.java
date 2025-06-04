@@ -1,9 +1,6 @@
 package com.phatpl.metube.controllers.video;
 
-import com.phatpl.metube.controllers.BaseController;
-import com.phatpl.metube.dtos.response.ResourceResponse;
-import com.phatpl.metube.filters.BaseFilter;
-import com.phatpl.metube.models.Resource;
+import com.phatpl.metube.exceptions.AuthorizationException;
 import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.utils.BuildResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +32,22 @@ public class ResourceController {
 
 
     @GetMapping
-    public ResponseEntity<?> findAll(String searchPattern) {
+    public ResponseEntity<?> findAll(@RequestParam(required = false) String searchPattern) {
         return BuildResponse.ok(
             resourceService.findAll(searchPattern)
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findById(@PathVariable Integer id) {
+        try {
+            return BuildResponse.ok(
+                    resourceService.findDTOById(id)
+            );
+        } catch (AuthorizationException exception) {
+            return BuildResponse.unauthorized("unauthorized");
+        } catch (Exception e) {
+            return BuildResponse.badRequest(e.getMessage());
+        }
     }
 }
