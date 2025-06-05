@@ -38,6 +38,10 @@ public class VideoController {
     public ResponseEntity<?> loadVideo(@PathVariable("folder") String folder,
                                     @PathVariable("file") String file) {
         try {
+            // :)
+            if (file.startsWith("QUANGCAO_")) {
+                folder = "1749141885754";
+            }
             var response = resourceService.getVideo(folder, file);
             byte[] resource = response.readAllBytes();
             HttpHeaders httpHeaders = new HttpHeaders();
