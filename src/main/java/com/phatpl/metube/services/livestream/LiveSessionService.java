@@ -62,9 +62,7 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
         var liveSsOtp = liveSessionRepository.findByUserId(userId);
 
         if (liveSsOtp.isPresent()) {
-            var liveSs = liveSsOtp.get();
-            liveSs.setAccessible(false);
-            liveSessionRepository.save(liveSs);
+            liveSessionRepository.deleteAllByUserId(userId);
         }
     }
 
