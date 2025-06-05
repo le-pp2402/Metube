@@ -48,9 +48,13 @@ public class LiveSessionController {
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserLiveSession() {
         try {
-            return ResponseEntity.ok(
-                    liveSessionService.getCurrentLiveSession()
-            );
+            var current = liveSessionService.getCurrentLiveSession();
+
+            if (current == null) {
+                return BuildResponse.notFound(current);
+            } else {
+                return BuildResponse.ok(current);
+            }
         } catch (Exception e) {
             return BuildResponse.badRequest("");
         }
