@@ -25,7 +25,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Service
-@Transactional
 public class ResourceService extends BaseService<Resource, ResourceResponse, BaseFilter, Integer> implements IResourceService {
 
     ResourceRepository resourceRepository;
@@ -64,7 +62,8 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         this.resourcesDetailMapper = resourcesDetailMapper;
     }
 
-    
+
+    @Transactional
     public PresignUrlResponse save(UploadResourceRequest req) throws Exception {
         var userid = userService.extractUserId();
         var user = userRepository.findById(userid).orElseThrow(AuthorizationException::new);
@@ -96,19 +95,22 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         return new PresignUrlResponse(uploadUrl);
     }
 
-
-
     public void deleteById(Integer id) {
-        try {
-            var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        var prefix = resource.getVideo().substring(0, resource.getVideo().indexOf('/'));
+        resourceRepository.deleteById(id);
 
-            minIOService.delete(resource.getVideo());
-            resourceRepository.deleteById(id);
+        try {
+            log.info("Starting to delete resource {}", prefix);
+            RemoveVideoService removeVideoService = new RemoveVideoService(prefix, minIOService);
+            removeVideoService.run();
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
     }
 
+
+    @Transactional
     public boolean update(UpdateResourceRequest request, Integer id) throws IOException, NoSuchAlgorithmException, InvalidKeyException, MinioException {
         log.info("[WORKSPACE CONTROLLER -> RESOURCES SERVICE]: {}", id.toString());
         var resource = resourceRepository.findById(id).orElseThrow(EntityNotFoundException::new);

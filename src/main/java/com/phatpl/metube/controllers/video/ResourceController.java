@@ -24,7 +24,7 @@ public class ResourceController {
     public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         try {
             resourceService.deleteById(id);
-            return BuildResponse.ok("deleted resources id = " + id);
+            return BuildResponse.ok("Deleting resources id = " + id);
         } catch (Exception e) {
             return BuildResponse.badRequest(e.getMessage());
         }

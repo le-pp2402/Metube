@@ -22,5 +22,6 @@ public class ResourceResponse extends BaseDTO  {
     String dateTime;
     Integer viewCount;
     Integer likeCount;
+    String description;
 }
 

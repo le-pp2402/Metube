@@ -45,6 +45,17 @@ public class LiveSessionController {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUserLiveSession() {
+        try {
+            return ResponseEntity.ok(
+                    liveSessionService.getCurrentLiveSession()
+            );
+        } catch (Exception e) {
+            return BuildResponse.badRequest("");
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getLiveSession(@PathVariable Integer id) {
         try {

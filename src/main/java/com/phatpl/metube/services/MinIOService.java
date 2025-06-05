@@ -3,6 +3,7 @@ package com.phatpl.metube.services;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
+import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -122,5 +125,32 @@ public class MinIOService {
 
     public String genUploadPresignedUrl(String file, String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         return genPreSignedUrl(file, bucketName, Method.PUT, 3, TimeUnit.HOURS);
+    }
+
+    public List<String> listFilesInFolderNonRecursive(String prefix) {
+        List<String> fileNames = new ArrayList<>();
+
+        try {
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket(bucketName)
+                            .prefix(prefix)
+                            .recursive(false)
+                            .build()
+            );
+
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                if (!item.isDir()) {
+                    fileNames.add(item.objectName());
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("Error listing files in folder (non-recursive): {}", prefix, e);
+            throw new RuntimeException("Failed to list files in folder: " + prefix, e);
+        }
+
+        return fileNames;
     }
 }

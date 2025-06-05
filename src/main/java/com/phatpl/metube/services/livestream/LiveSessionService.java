@@ -76,4 +76,10 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
         var result = liveSessionRepository.findLiveSessionByIsAccessible(true);
         return liveSessionMapper.toListDTO(result);
     }
+
+    public LiveSessionResponse getCurrentLiveSession() {
+        var userId = userService.extractUserId();
+        var currLiveSession = liveSessionRepository.findByUserId(userId);
+        return currLiveSession.map(liveSessionMapper::toDTO).orElse(null);
+    }
 }

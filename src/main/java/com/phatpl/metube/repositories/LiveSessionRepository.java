@@ -2,6 +2,7 @@ package com.phatpl.metube.repositories;
 
 import com.phatpl.metube.filters.BaseFilter;
 import com.phatpl.metube.models.LiveSession;
+import com.phatpl.metube.models.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface LiveSessionRepository extends BaseRepository<LiveSession, BaseF
     void deleteAllByUserId(Integer userId);
     Optional<LiveSession> findByUserId(Integer id);
     List<LiveSession> findLiveSessionByIsAccessible(boolean accessible);
+
+    Integer user(User user);
 }
