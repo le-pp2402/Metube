@@ -41,6 +41,7 @@ public class VideoController {
             // :)
             if (file.startsWith("QUANGCAO_")) {
                 folder = "1749141885754";
+                file = file.substring("QUANGCAO_".length());
             }
             var response = resourceService.getVideo(folder, file);
             byte[] resource = response.readAllBytes();
