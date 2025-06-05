@@ -11,6 +11,7 @@ import com.phatpl.metube.services.BaseService;
 import com.phatpl.metube.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,18 +53,14 @@ public class LiveSessionService extends BaseService<LiveSession, LiveSessionResp
         return liveSessionMapper.toDTO(liveSession);
     }
 
+    @Transactional
     public void stopLiveSession() {
         var userId = userService.extractUserId();
 
         if (userId == null) {
             throw new AuthorizationException();
         }
-
-        var liveSsOtp = liveSessionRepository.findByUserId(userId);
-
-        if (liveSsOtp.isPresent()) {
-            liveSessionRepository.deleteAllByUserId(userId);
-        }
+        liveSessionRepository.deleteAllByUserId(userId);
     }
 
     public void deleteByUserId(Integer userId) {
