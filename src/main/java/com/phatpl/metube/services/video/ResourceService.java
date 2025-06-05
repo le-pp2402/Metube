@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -179,5 +180,19 @@ public class ResourceService extends BaseService<Resource, ResourceResponse, Bas
         }
 
         throw new AuthorizationException();
+    }
+
+    public List<Integer> getStatistic() {
+        var userId = userService.extractUserId();
+
+        if (userId == null) {
+            throw new AuthorizationException();
+        }
+
+        int uploading = resourceRepository.countByUserIdAndStatus(userId, ResourceStatus.UPLOADING);
+        int waiting = resourceRepository.countByUserIdAndStatus(userId, ResourceStatus.WAITING);
+        int processing = resourceRepository.countByUserIdAndStatus(userId, ResourceStatus.PROCESSING);
+        int ready = resourceRepository.countByUserIdAndStatus(userId, ResourceStatus.READY);
+        return new ArrayList<>(List.of(uploading, waiting, processing, ready));
     }
 }

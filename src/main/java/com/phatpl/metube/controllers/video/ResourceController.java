@@ -1,6 +1,7 @@
 package com.phatpl.metube.controllers.video;
 
 import com.phatpl.metube.exceptions.AuthorizationException;
+import com.phatpl.metube.services.video.AdvertisementService;
 import com.phatpl.metube.services.video.ResourceService;
 import com.phatpl.metube.utils.BuildResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +13,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/resources")
 public class ResourceController {
-
     private final ResourceService resourceService;
+    private final AdvertisementService advertisementService;
 
     @Autowired
-    public ResourceController(ResourceService resourceService) {
+    public ResourceController(ResourceService resourceService, AdvertisementService advertisementService) {
         this.resourceService = resourceService;
+        this.advertisementService = advertisementService;
     }
 
     @DeleteMapping("/{id}")
@@ -50,4 +52,18 @@ public class ResourceController {
             return BuildResponse.badRequest(e.getMessage());
         }
     }
+
+    @PostMapping("/add-ad/{id}")
+    public ResponseEntity<?> addAdvertisement(@PathVariable("id") Integer id) {
+        try {
+            return BuildResponse.ok(
+                    advertisementService.addAdvertisementService(id)
+            );
+        } catch (AuthorizationException exception) {
+            return BuildResponse.unauthorized("unauthorized");
+        } catch (Exception e) {
+            return BuildResponse.badRequest(e.getMessage());
+        }
+    }
+
 }

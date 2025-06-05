@@ -33,4 +33,6 @@ public interface ResourceRepository extends BaseRepository<Resource, BaseFilter,
 
     List<Resource> findByUserAndTitleContainsIgnoreCase(User user, String title);
     List<Resource> findByTitleContainsIgnoreCaseAndIsPrivate(String title, Boolean isPrivate);
+
+    int countByUserIdAndStatus(Integer userId, ResourceStatus resourceStatus);
 }

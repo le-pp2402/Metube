@@ -69,6 +69,18 @@ public class MinIOService {
         return filePath;
     }
 
+    public String uploadM3U8(InputStream inputStream, String filePath) throws Exception {
+        PutObjectArgs putObjectArgs = PutObjectArgs
+                .builder()
+                .contentType("text/plain")
+                .stream(inputStream, inputStream.available(), -1)
+                .bucket(bucketName)
+                .object(filePath)
+                .build();
+        minioClient.putObject(putObjectArgs);
+        return filePath;
+    }
+
     public String uploadDocument(MultipartFile document, String filePath) throws Exception {
         InputStream input = document.getInputStream();
         PutObjectArgs putObjectArgs = PutObjectArgs
