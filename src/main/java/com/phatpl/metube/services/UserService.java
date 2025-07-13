@@ -53,7 +53,7 @@ public class UserService extends BaseService<User, UserResponse, UserFilter, Int
         if (userRepository.findByEmail(email).isPresent() || userRepository.findByUsername(username).isPresent()) {
             throw new AlreadyExistsException(User.class, email + " or " + username);
         }
-
+        log.info("sending mail");
         User user = registerRequestMapper.toEntity(request);
         user.setPassword(BCryptPassword.encode(user.getPassword()));
         // TODO: remove code after 5 minutes
@@ -61,8 +61,9 @@ public class UserService extends BaseService<User, UserResponse, UserFilter, Int
         user.setActivated(false);
 
         userRepository.save(user);
+        log.info("sending mail");
         mailService.sendEmail(MailUtil.genMail(user.getEmail(), user.getCode()));
-
+        log.info("sent email");
         return UserResponseMapper.instance.toDTO(user);
     }
 

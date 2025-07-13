@@ -28,10 +28,12 @@ public class RegisterController {
 
     @PostMapping
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) throws AlreadyExistsException {
+        System.err.println("register");
         if (bindingResult.hasErrors()) {
             List<FieldError> errors = bindingResult.getFieldErrors();
             return BuildResponse.badRequest(errors.get(0).getDefaultMessage());
         } else {
+            System.err.println("passing RegisterController.register");
             var obj = userService.register(request);
             return BuildResponse.created(obj);
         }
