@@ -1,53 +1,59 @@
 package com.phatpl.metube.auth.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
+import com.phatpl.metube.common.id.SnowflakeIdListener;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
+@Entity
+@Getter
+@Table(name = "users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@EntityListeners(SnowflakeIdListener.class)
 public class User {
   @Id
   @Column(nullable = false, updatable = false)
-  private Long id;
+  @Setter(AccessLevel.NONE)
+  Long id;
 
+  @Column(length = 80, nullable = false)
+  String username;
+
+  @Column(length = 200, nullable = false)
+  String password;
+
+  @Column(length = 100, nullable = false)
+  String email;
+
+  @Column(length = 200)
+  String streamKey;
+
+  @Column(length = 200)
+  String avatarUrl;
+
+  public void register(String username, String password, String email) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+  }
+
+  public void changePassword(String newPassword) {
+    this.password = newPassword;
+  }
+
+  public void updateProfile(String newUsername, String newEmail, String newAvatarUrl) {
+    if (newUsername != null && !newUsername.isBlank()) {
+      this.username = newUsername;
+    }
+    if (newEmail != null && !newEmail.isBlank()) {
+      this.email = newEmail;
+    }
+    if (newAvatarUrl != null && !newAvatarUrl.isBlank()) {
+      this.avatarUrl = newAvatarUrl;
+    }
+  }
+
+  public void updateStreamKey(String newStreamKey) {
+    this.streamKey = newStreamKey;
+  }
 }
-
-
-// package com.phatpl.metube._models;
-
-// import jakarta.persistence.*;
-// import lombok.*;
-// import lombok.experimental.FieldDefaults;
-
-// @Getter
-// @Setter
-// @Entity
-// @NoArgsConstructor
-// @AllArgsConstructor
-// @FieldDefaults(level = AccessLevel.PRIVATE)
-// @Table(name = "users")
-// public class User extends BaseModel {
-
-// @Column(length = 50, nullable = false)
-// String username;
-
-// @Column(length = 200, nullable = false)
-// String password;
-
-// @Column(nullable = false, length = 100)
-// String email;
-
-// @Column(updatable = false)
-// Boolean isAdmin = false;
-// Integer elo = 0;
-// Boolean activated = false;
-
-
-// @Column(name = "StreamKey")
-// String streamKey = "!@#$%^&*)(*&HHDS123";
-
-// Integer code;
-
-// @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch =
-// FetchType.LAZY)
-// LiveSession liveSession;
-
-// }
