@@ -5,15 +5,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity
-@Getter
-@Table(name = "users")
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Entity 
+@Getter 
+@Table(name = "users") 
+@FieldDefaults(level = AccessLevel.PRIVATE) 
 @EntityListeners(SnowflakeIdListener.class)
 public class User {
-  @Id
-  @Column(nullable = false, updatable = false)
-  @Setter(AccessLevel.NONE)
+  @Id @Column(nullable = false, updatable = false) @Setter(AccessLevel.NONE)
   Long id;
 
   @Column(length = 80, nullable = false)
@@ -41,7 +39,8 @@ public class User {
     this.password = newPassword;
   }
 
-  public void updateProfile(String newUsername, String newEmail, String newAvatarUrl) {
+  public void updateProfile(String newUsername, String newEmail,
+          String newAvatarUrl) {
     if (newUsername != null && !newUsername.isBlank()) {
       this.username = newUsername;
     }
