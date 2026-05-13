@@ -1,17 +1,21 @@
 package com.phatpl.metube.auth.model;
 
 import com.phatpl.metube.common.id.SnowflakeIdListener;
+import com.phatpl.metube.common.model.Auditable;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity 
-@Getter 
-@Table(name = "users") 
-@FieldDefaults(level = AccessLevel.PRIVATE) 
+@Entity
+@Getter
+@Table(name = "users")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(SnowflakeIdListener.class)
-public class User {
-  @Id @Column(nullable = false, updatable = false) @Setter(AccessLevel.NONE)
+public class User extends Auditable {
+  @Id
+  @Column(nullable = false, updatable = false)
+  @Setter(AccessLevel.NONE)
   Long id;
 
   @Column(length = 80, nullable = false)
@@ -29,6 +33,15 @@ public class User {
   @Column(length = 200)
   String avatarUrl;
 
+  @Column(nullable = false)
+  boolean enabled = true;
+
+  @Column(nullable = false)
+  boolean emailVerified = false;
+
+  @Column(nullable = false)
+  Long tokenVersion = 0L;
+
   public void register(String username, String password, String email) {
     this.username = username;
     this.password = password;
@@ -40,7 +53,7 @@ public class User {
   }
 
   public void updateProfile(String newUsername, String newEmail,
-          String newAvatarUrl) {
+      String newAvatarUrl) {
     if (newUsername != null && !newUsername.isBlank()) {
       this.username = newUsername;
     }
@@ -54,5 +67,9 @@ public class User {
 
   public void updateStreamKey(String newStreamKey) {
     this.streamKey = newStreamKey;
+  }
+
+  public void logoutAllSessions() {
+    this.tokenVersion += 1;
   }
 }

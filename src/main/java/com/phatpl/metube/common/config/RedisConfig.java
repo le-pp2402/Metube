@@ -1,6 +1,7 @@
 package com.phatpl.metube.common.config;
 
 import java.time.Duration;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +9,8 @@ import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 import com.phatpl.metube.common.RedisProperties;
 
 @Configuration
@@ -20,9 +19,7 @@ public class RedisConfig {
 
   @Bean
   public LettuceConnectionFactory redisConnectionFactory(
-      RedisProperties redisProperties
-    ) 
-  {
+      RedisProperties redisProperties) {
     var config = LettuceClientConfiguration.builder()
         .commandTimeout(Duration.ofSeconds(2)).shutdownTimeout(Duration.ZERO)
         .build();
@@ -38,28 +35,24 @@ public class RedisConfig {
 
   @Bean
   public StringRedisTemplate stringRedisTemplate(
-      LettuceConnectionFactory connectionFactory
-    ) 
-  {
+      LettuceConnectionFactory connectionFactory) {
     return new StringRedisTemplate(connectionFactory);
   }
 
-  @Bean
-  public RedisTemplate<String, Object> redisTemplate(
-      LettuceConnectionFactory connectionFactory
-    ) 
-  {
-    RedisTemplate<String, Object> template = new RedisTemplate<>();
-    template.setConnectionFactory(connectionFactory);
+  // @Bean
+  // public RedisTemplate<String, Object> redisTemplate(
+  // LettuceConnectionFactory connectionFactory) {
+  // RedisTemplate<String, Object> template = new RedisTemplate<>();
+  // template.setConnectionFactory(connectionFactory);
 
-    var stringSerializer = new StringRedisSerializer();
-    var jsonSerializer = new GenericJackson2JsonRedisSerializer();
+  // var stringSerializer = new StringRedisSerializer();
+  // var jsonSerializer = new JacksonJsonRedisSerializer<>(Object.class);
 
-    template.setKeySerializer(stringSerializer);
-    template.setValueSerializer(jsonSerializer);
-    template.setHashKeySerializer(stringSerializer);
-    template.setHashValueSerializer(jsonSerializer);
-    template.afterPropertiesSet();
-    return template;
-  }
+  // template.setKeySerializer(stringSerializer);
+  // template.setValueSerializer(jsonSerializer);
+  // template.setHashKeySerializer(stringSerializer);
+  // template.setHashValueSerializer(jsonSerializer);
+  // template.afterPropertiesSet();
+  // return template;
+  // }
 }

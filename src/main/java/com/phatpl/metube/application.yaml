@@ -1,7 +1,0 @@
-metube:
-  snowflake:
-    worker-id: 1
-    data-center-id: 1
-  redis:
-    host: localhost
-    password: redis_password
