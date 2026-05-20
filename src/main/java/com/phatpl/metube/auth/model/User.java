@@ -1,7 +1,10 @@
 package com.phatpl.metube.auth.model;
 
+import org.hibernate.annotations.SQLRestriction;
+
 import com.phatpl.metube.common.id.SnowflakeIdListener;
 import com.phatpl.metube.common.model.Auditable;
+import com.phatpl.metube.common.model.ISoftDelete;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +15,8 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(SnowflakeIdListener.class)
-public class User extends Auditable {
+@SQLRestriction("deleted = false")
+public class User extends Auditable implements ISoftDelete {
   @Id
   @Column(nullable = false, updatable = false)
   @Setter(AccessLevel.NONE)
@@ -21,35 +25,35 @@ public class User extends Auditable {
   @Column(length = 80, nullable = false)
   String username;
 
-  @Column(length = 200, nullable = false)
-  String password;
+  @Column(name = "pwd_hash", length = 200, nullable = false)
+  String pwdHash;
 
   @Column(length = 100, nullable = false)
   String email;
 
-  @Column(length = 200)
+  @Column(name = "stream_key", length = 200)
   String streamKey;
 
-  @Column(length = 200)
+  @Column(name = "avatar_url", length = 200)
   String avatarUrl;
 
   @Column(nullable = false)
-  boolean enabled = true;
+  boolean active = true;
 
   @Column(nullable = false)
-  boolean emailVerified = false;
+  boolean verified = false;
 
-  @Column(nullable = false)
-  Long tokenVersion = 0L;
+  @Column(name = "token_ver", nullable = false)
+  Long tokenVer = 0L;
 
   public void register(String username, String password, String email) {
     this.username = username;
-    this.password = password;
+    this.pwdHash = password;
     this.email = email;
   }
 
-  public void changePassword(String newPassword) {
-    this.password = newPassword;
+  public void changePassword(String newHashedPwd) {
+    this.pwdHash = newHashedPwd;
   }
 
   public void updateProfile(String newUsername, String newEmail,
@@ -65,11 +69,29 @@ public class User extends Auditable {
     }
   }
 
-  public void updateStreamKey(String newStreamKey) {
+  public void changeStreamKey(String newStreamKey) {
     this.streamKey = newStreamKey;
   }
 
-  public void logoutAllSessions() {
-    this.tokenVersion += 1;
+  public void revokeTokens() {
+    this.tokenVer += 1;
+  }
+
+  @Column(nullable = false)
+  boolean deleted = false;
+
+  @Override
+  public boolean isDeleted() {
+    return deleted;
+  }
+
+  @Override
+  public void delete() {
+    this.deleted = true;
+  }
+
+  @Override
+  public void restore() {
+    this.deleted = false;
   }
 }

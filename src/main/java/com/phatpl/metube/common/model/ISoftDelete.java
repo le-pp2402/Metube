@@ -4,4 +4,6 @@ public interface ISoftDelete {
   boolean isDeleted();
 
   void delete();
+
+  void restore();
 }
