@@ -8,6 +8,7 @@ CREATE TABLE users (
     active      BOOLEAN                     NOT NULL DEFAULT TRUE,
     verified    BOOLEAN                     NOT NULL DEFAULT FALSE,
     token_ver   BIGINT                      NOT NULL DEFAULT 0,
+    deleted     BOOLEAN                     NOT NULL DEFAULT FALSE,
     created_at  TIMESTAMP WITH TIME ZONE    NOT NULL,
     updated_at  TIMESTAMP WITH TIME ZONE,
     CONSTRAINT pk_users PRIMARY KEY (id)
