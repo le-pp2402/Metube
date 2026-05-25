@@ -65,6 +65,14 @@ fi
 
 # determine jar path
 JAR="${2:-${DIR}/target/Metube-0.0.1-SNAPSHOT.jar}"
+
+# rebuild: remove stale jar then repackage
+echo "Removing stale jar..."
+rm -f "$JAR"
+echo "Building..."
+JAVA_HOME="/usr/lib/jvm/java-21-amazon-corretto" \
+  mvn -f "${DIR}/pom.xml" package -DskipTests -q
+
 if [ ! -f "$JAR" ]; then
   echo "Jar not found: $JAR" >&2
   exit 1
