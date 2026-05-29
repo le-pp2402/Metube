@@ -21,6 +21,9 @@ metube:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD}
+  jwt:
+    access-token-validity: 15m # 15 minutes
+    refresh-token-validity: 7d # 7 days
 logging:
   pattern:
     console:

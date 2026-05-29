@@ -33,6 +33,7 @@ import cn.hutool.core.codec.Base64;
 public class RedisKeyProvider implements KeyProvider {
   private static final Logger logger = LoggerFactory.getLogger(RedisKeyProvider.class);
 
+  // RSA 256
   private static final String RSA = "RSA";
   private static final int KEY_SIZE = 2048;
 
