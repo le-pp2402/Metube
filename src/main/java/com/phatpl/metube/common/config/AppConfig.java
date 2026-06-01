@@ -26,7 +26,7 @@ public class AppConfig {
   @PostConstruct
   public void init() {
     logger.info("Initializing application — rotating RSA keys...");
-    keyProvider.rotate();
+    keyProvider.getCurrent();
     logger.info("RSA key rotation complete.");
   }
 }

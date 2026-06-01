@@ -65,7 +65,7 @@ public class JwtServiceImpl implements JwtService {
 
       validateAlgorithm(header);
 
-      var kid = parseKid(header.getKeyID());
+      var kid = parseLongClaim(header.getKeyID());
 
       var keyPair = keyProvider.getById(kid)
           .orElseThrow(() -> new InvalidTokenException("Unknow JWT kid: " + kid));
@@ -80,7 +80,7 @@ public class JwtServiceImpl implements JwtService {
       validateRequiredClaims(claims);
       validateExpiration(claims);
 
-      var jti = parseKid(claims.getJWTID());
+      var jti = parseLongClaim(claims.getJWTID());
 
       if (blackListService.isRevoked(jti)) {
         throw new InvalidTokenException("Token has been revoked");
@@ -139,15 +139,15 @@ public class JwtServiceImpl implements JwtService {
     }
   }
 
-  private Long parseKid(String kid) {
-    if (kid == null || kid.isBlank()) {
+  private Long parseLongClaim(String id) {
+    if (id == null || id.isBlank()) {
       throw new InvalidTokenException("Missing JWT kid");
     }
 
     try {
-      return Long.valueOf(kid);
+      return Long.valueOf(id);
     } catch (NumberFormatException e) {
-      throw new InvalidTokenException("Invalid JWT kid: " + kid, e);
+      throw new InvalidTokenException("Invalid JWT kid: " + id, e);
     }
   }
 
@@ -170,8 +170,8 @@ public class JwtServiceImpl implements JwtService {
         .build();
 
     JWTClaimsSet claims = new JWTClaimsSet.Builder()
-        .jwtID(idGenerator.nextId().toString())
-        .subject(userPrincipal.getUsername())
+        .jwtID(String.valueOf(idGenerator.nextLongId()))
+        .subject(String.valueOf(user.getId()))
         .issueTime(Date.from(now))
         .expirationTime(Date.from(exp))
         .claim(CLAIM_USERNAME, user.getUsername())

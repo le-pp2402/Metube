@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWK;
@@ -29,7 +29,7 @@ import com.phatpl.metube.common.id.IdGenerator;
 
 import cn.hutool.core.codec.Base64;
 
-@Component
+@Service
 public class RedisKeyProvider implements KeyProvider {
   private static final Logger logger = LoggerFactory.getLogger(RedisKeyProvider.class);
 
