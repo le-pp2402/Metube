@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "metube.jwt")
 public record JwtProperties(
-    Duration accessTokenValidity,
-    Duration refreshTokenValidity) {
-
+        Duration accessTokenValidity,
+        Duration refreshTokenValidity) {
 }

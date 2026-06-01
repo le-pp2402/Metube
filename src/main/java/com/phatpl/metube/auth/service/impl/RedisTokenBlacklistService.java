@@ -19,22 +19,22 @@ public class RedisTokenBlacklistService implements TokenBlacklistService {
   }
 
   @Override
-  public void add(Long jti, Instant expiry) {
+  public void revoke(Long jti, Instant expiry) {
     if (jti == null || expiry == null) {
       return;
     }
 
     String key = getKey(jti);
 
-    long ttl = Duration.between(Instant.now(), expiry).getSeconds();
+    var ttl = Duration.between(Instant.now(), expiry);
 
-    if (ttl > 0) {
+    if (ttl.isPositive()) {
       redisTemplate.opsForValue().set(key, "revoked", ttl);
     }
   }
 
   @Override
-  public boolean isBlacklisted(Long jti) {
+  public boolean isRevoked(Long jti) {
     if (jti == null || jti <= 0) {
       return false;
     }

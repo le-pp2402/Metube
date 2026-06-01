@@ -6,12 +6,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 import com.phatpl.metube.auth.service.impl.RedisKeyProvider;
+import com.phatpl.metube.common.JwtProperties;
 import com.phatpl.metube.common.id.SnowflakeProperties;
 
 import jakarta.annotation.PostConstruct;
 
 @Configuration
-@EnableConfigurationProperties(SnowflakeProperties.class)
+@EnableConfigurationProperties({ SnowflakeProperties.class, JwtProperties.class })
 public class AppConfig {
 
   private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
