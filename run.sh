@@ -66,12 +66,51 @@ fi
 # determine jar path
 JAR="${2:-${DIR}/target/Metube-0.0.1-SNAPSHOT.jar}"
 
+resolve_java_home() {
+  if [ -n "${JAVA_HOME:-}" ] && [ -x "${JAVA_HOME}/bin/java" ] && [ -x "${JAVA_HOME}/bin/javac" ]; then
+    printf '%s\n' "$JAVA_HOME"
+    return 0
+  fi
+
+  if [ -d "/usr/lib/jvm/java-21-openjdk-amd64" ]; then
+    printf '%s\n' "/usr/lib/jvm/java-21-openjdk-amd64"
+    return 0
+  fi
+
+  if command -v javac >/dev/null 2>&1; then
+    javac_path="$(readlink -f "$(command -v javac)")"
+    printf '%s\n' "$(dirname "$(dirname "$javac_path")")"
+    return 0
+  fi
+
+  if command -v java >/dev/null 2>&1; then
+    java_path="$(readlink -f "$(command -v java)")"
+    printf '%s\n' "$(dirname "$(dirname "$java_path")")"
+    return 0
+  fi
+
+  return 1
+}
+
+JAVA_HOME="$(resolve_java_home)" || {
+  echo "No JDK found. Install Java 21 and set JAVA_HOME to its JDK directory." >&2
+  exit 1
+}
+
+JAVA_VERSION="$("$JAVA_HOME/bin/java" -version 2>&1 | awk -F'[".]' '/version/ {print $2; exit}')"
+if [ -z "$JAVA_VERSION" ] || [ "$JAVA_VERSION" -lt 21 ]; then
+  echo "Metube requires JDK 21. Found Java ${JAVA_VERSION:-unknown} at $JAVA_HOME." >&2
+  echo "Set JAVA_HOME to a JDK 21 installation and rerun ./run.sh." >&2
+  exit 1
+fi
+
 # rebuild: remove stale jar then repackage
 echo "Removing stale jar..."
 rm -f "$JAR"
 echo "Building..."
-JAVA_HOME="/usr/lib/jvm/java-21-amazon-corretto" \
-  mvn -f "${DIR}/pom.xml" package -DskipTests -q
+export JAVA_HOME
+export PATH="$JAVA_HOME/bin:$PATH"
+mvn -f "${DIR}/pom.xml" package -DskipTests -q
 
 if [ ! -f "$JAR" ]; then
   echo "Jar not found: $JAR" >&2
@@ -79,10 +118,5 @@ if [ ! -f "$JAR" ]; then
 fi
 
 echo "Starting application: java ${JAVA_OPTS:-} -jar $JAR"
-# Use Java 21 if available, otherwise use current JAVA_HOME
-if [ -d "/usr/lib/jvm/java-21-amazon-corretto" ]; then
-  export JAVA_HOME="/usr/lib/jvm/java-21-amazon-corretto"
-  export PATH="$JAVA_HOME/bin:$PATH"
-fi
-exec java ${JAVA_OPTS:-} -jar "$JAR"
+exec "$JAVA_HOME/bin/java" ${JAVA_OPTS:-} -jar "$JAR"
 

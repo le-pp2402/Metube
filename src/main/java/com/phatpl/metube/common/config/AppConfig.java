@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Async;
 
 import com.phatpl.metube.auth.service.impl.RedisKeyProvider;
 import com.phatpl.metube.common.JwtProperties;
@@ -23,6 +24,7 @@ public class AppConfig {
     this.keyProvider = keyProvider;
   }
 
+  @Async
   @PostConstruct
   public void init() {
     logger.info("Initializing application — rotating RSA keys...");

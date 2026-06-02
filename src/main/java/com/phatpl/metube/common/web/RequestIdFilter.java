@@ -2,6 +2,8 @@ package com.phatpl.metube.common.web;
 
 import java.io.IOException;
 
+import org.slf4j.MDC;
+
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,10 +26,17 @@ public class RequestIdFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     var reqId = request.getHeader(REQUEST_ID_HEADER);
 
-    if (reqId.isBlank()) {
+    if (reqId == null || reqId.isBlank()) {
       reqId = IdUtil.fastSimpleUUID();
     }
 
-    // TODO:
+    MDC.put(MDC_REQUEST_ID, reqId);
+    
+    try {
+      response.setHeader(REQUEST_ID_HEADER, reqId);
+      filterChain.doFilter(request, response);
+    } finally {
+      MDC.remove(MDC_REQUEST_ID);
+    }
   }
 }
