@@ -14,10 +14,13 @@ public class JsonApiErrorWriter {
 
   private final ObjectMapper objectMapper;
   private final JsonApiErrorFactory errorFactory;
+  private final JsonApiErrorLogger errorLogger;
 
-  public JsonApiErrorWriter(ObjectMapper objectMapper, JsonApiErrorFactory errorFactory) {
+  public JsonApiErrorWriter(ObjectMapper objectMapper, JsonApiErrorFactory errorFactory,
+      JsonApiErrorLogger errorLogger) {
     this.objectMapper = objectMapper;
     this.errorFactory = errorFactory;
+    this.errorLogger = errorLogger;
   }
 
   public void write(
@@ -27,17 +30,31 @@ public class JsonApiErrorWriter {
       ApiErrorCode code,
       String title,
       String detail,
-      JsonApiErrorSource source) throws IOException {
+      JsonApiErrorSource source)
+      throws IOException {
+    write(request, response, status, code, title, detail, source, null);
+  }
+
+  public void write(
+      HttpServletRequest request,
+      HttpServletResponse response,
+      HttpStatus status,
+      ApiErrorCode code,
+      String title,
+      String detail,
+      JsonApiErrorSource source,
+      Throwable throwable) throws IOException {
     if (response.isCommitted()) {
       return;
     }
 
+    var error = errorFactory.create(request, status, code, title, detail, source);
+    errorLogger.log(request, status, code, error, throwable);
+    
     response.resetBuffer();
     response.setStatus(status.value());
     response.setCharacterEncoding(StandardCharsets.UTF_8.name());
     response.setContentType(JSON_API_MEDIA_TYPE);
-
-    var error = errorFactory.create(request, status, code, title, detail, source);
 
     objectMapper.writeValue(response.getOutputStream(), errorFactory.document(error));
 
