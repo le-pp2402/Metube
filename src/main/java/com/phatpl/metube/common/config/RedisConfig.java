@@ -38,21 +38,4 @@ public class RedisConfig {
       LettuceConnectionFactory connectionFactory) {
     return new StringRedisTemplate(connectionFactory);
   }
-
-  // @Bean
-  // public RedisTemplate<String, Object> redisTemplate(
-  // LettuceConnectionFactory connectionFactory) {
-  // RedisTemplate<String, Object> template = new RedisTemplate<>();
-  // template.setConnectionFactory(connectionFactory);
-
-  // var stringSerializer = new StringRedisSerializer();
-  // var jsonSerializer = new JacksonJsonRedisSerializer<>(Object.class);
-
-  // template.setKeySerializer(stringSerializer);
-  // template.setValueSerializer(jsonSerializer);
-  // template.setHashKeySerializer(stringSerializer);
-  // template.setHashValueSerializer(jsonSerializer);
-  // template.afterPropertiesSet();
-  // return template;
-  // }
 }

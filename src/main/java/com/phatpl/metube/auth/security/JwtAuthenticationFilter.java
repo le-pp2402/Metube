@@ -13,6 +13,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.phatpl.metube.auth.service.JwtService;
 import com.phatpl.metube.common.api.ApiErrorCode;
+import com.phatpl.metube.common.api.JsonApiErrorWriter;
+import com.phatpl.metube.common.exception.InvalidTokenException;
+import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,13 +24,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+  // Name of the HttpOnly cookie that holds the JWT access token.
+  // Must match the cookie name set by AuthService when issuing tokens.
+  public static final String ACCESS_TOKEN_COOKIE = "access_token";
   private static final String BEARER_PREFIX = "Bearer ";
   private static final String ACCESS = "access";
 
   private final JwtService jwtService;
+  private final JsonApiErrorWriter errorWriter;
 
-  public JwtAuthenticationFilter(JwtService jwtService) {
+  public JwtAuthenticationFilter(JwtService jwtService, JsonApiErrorWriter errorWriter) {
     this.jwtService = jwtService;
+    this.errorWriter = errorWriter;
   }
 
   @Override
@@ -37,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain) throws ServletException, IOException {
 
     try {
-      var token = extractBearerToken(req);
+      var token = extractToken(req);
 
       if (token == null) {
         filterChain.doFilter(req, response);
@@ -47,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       var claims = jwtService.validateToken(token);
 
       if (!ACCESS.equals(claims.type())) {
-        throw new ApiAuthenticationException(
+        throw new ApiAuthException(
             ApiErrorCode.INVALID_TOKEN_TYPE,
             "Only access token is allowed for this secured");
       }
@@ -64,19 +72,60 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       SecurityContextHolder.getContext().setAuthentication(authen);
 
       filterChain.doFilter(req, response);
-    } catch (ApiAuthenticationException | ServletException | IOException e) {
+    } catch (ApiAuthException | InvalidTokenException e) {
+      ApiErrorCode errorCode = ApiErrorCode.INVALID_TOKEN;
+      String detail = e.getMessage();
+      if (e instanceof ApiAuthException aee) {
+        errorCode = aee.getCode();
+        detail = aee.getSafeDetail();
+      }
+
+      errorWriter.write(
+          req,
+          response,
+          HttpStatus.UNAUTHORIZED,
+          errorCode,
+          "Authentication Failed",
+          detail,
+          null,
+          e);
     }
   }
 
-  private String extractBearerToken(HttpServletRequest req) {
-    var author = req.getHeader(HttpHeaders.AUTHORIZATION);
-
-    if (author == null || !author.startsWith(BEARER_PREFIX)) {
-      return null;
+  /**
+   * Extracts the JWT access token from the request.
+   *
+   * Priority:
+   * 1. HttpOnly cookie named "access_token" — preferred when using cookie-based
+   * auth.
+   * HttpOnly prevents JS from reading it (XSS protection), CSRF protection covers
+   * mutating requests.
+   * 2. Authorization: Bearer <token> header — fallback for API clients (curl,
+   * mobile).
+   *
+   * Returns null if no token is found, which causes the filter to pass the
+   * request
+   * through unauthenticated (Spring Security will then enforce rules per
+   * endpoint).
+   */
+  private String extractToken(HttpServletRequest req) {
+    // 1. Try HttpOnly cookie first
+    if (req.getCookies() != null) {
+      for (var cookie : req.getCookies()) {
+        if (ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+          var value = cookie.getValue();
+          return (value == null || value.isBlank()) ? null : value;
+        }
+      }
     }
 
-    var token = author.substring(BEARER_PREFIX.length()).trim();
+    // 2. Fall back to Authorization: Bearer <token> header
+    var header = req.getHeader(HttpHeaders.AUTHORIZATION);
+    if (header != null && header.startsWith(BEARER_PREFIX)) {
+      var token = header.substring(BEARER_PREFIX.length()).trim();
+      return token.isBlank() ? null : token;
+    }
 
-    return token.isBlank() ? null : token;
+    return null;
   }
 }

@@ -4,11 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 import com.phatpl.metube.common.logging.LogMdcKeys;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+@Component
 public class JsonApiErrorLogger {
   private static final Logger logger = LoggerFactory.getLogger(JsonApiErrorLogger.class);
 

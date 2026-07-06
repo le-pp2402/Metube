@@ -2,6 +2,7 @@ package com.phatpl.metube.common.api;
 
 public enum ApiErrorCode {
   AUTHENTICATION_REQUIRED,
+  INVALID_TOKEN,
   INVALID_ACCESS_TOKEN,
   INVALID_TOKEN_TYPE,
   TOKEN_VERSION_MISMATCH,

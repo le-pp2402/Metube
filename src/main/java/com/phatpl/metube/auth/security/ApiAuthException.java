@@ -4,17 +4,17 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.phatpl.metube.common.api.ApiErrorCode;
 
-public class ApiAuthenticationException extends AuthenticationException {
+public class ApiAuthException extends AuthenticationException {
   private final ApiErrorCode code;
   private final String safeDetail;
 
-  public ApiAuthenticationException(ApiErrorCode code, String safeDetail) {
+  public ApiAuthException(ApiErrorCode code, String safeDetail) {
     super(safeDetail);
     this.code = code;
     this.safeDetail = safeDetail;
   }
 
-  public ApiAuthenticationException(
+  public ApiAuthException(
       ApiErrorCode code,
       String safeDetail,
       Throwable cause) {

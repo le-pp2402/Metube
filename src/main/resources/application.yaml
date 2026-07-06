@@ -25,6 +25,8 @@ metube:
   jwt:
     access-token-validity: 15m # 15 minutes
     refresh-token-validity: 7d # 7 days
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 logging:
   pattern:
     console:
