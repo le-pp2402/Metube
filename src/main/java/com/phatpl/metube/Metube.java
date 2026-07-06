@@ -8,10 +8,10 @@ import org.springframework.boot.transaction.jta.autoconfigure.JtaAutoConfigurati
 import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 
 @SpringBootApplication(exclude = {
-    ErrorMvcAutoConfiguration.class,
-    JtaAutoConfiguration.class,
-    DataRedisReactiveAutoConfiguration.class,
-    MultipartAutoConfiguration.class
+        ErrorMvcAutoConfiguration.class,
+        JtaAutoConfiguration.class,
+        DataRedisReactiveAutoConfiguration.class,
+        MultipartAutoConfiguration.class
 })
 public class Metube {
     public static void main(String[] args) {

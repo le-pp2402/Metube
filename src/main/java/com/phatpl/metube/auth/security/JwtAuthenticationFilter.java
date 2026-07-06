@@ -2,7 +2,6 @@ package com.phatpl.metube.auth.security;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.phatpl.metube.auth.service.JwtService;
-import com.phatpl.metube.auth.service.impl.UserDetailsServiceImpl;
 import com.phatpl.metube.common.api.ApiErrorCode;
 
 import jakarta.servlet.FilterChain;
@@ -23,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-  private static final String BEARER_PERFIX = "Bearer ";
+  private static final String BEARER_PREFIX = "Bearer ";
   private static final String ACCESS = "access";
 
   private final JwtService jwtService;
@@ -66,19 +64,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       SecurityContextHolder.getContext().setAuthentication(authen);
 
       filterChain.doFilter(req, response);
-    } catch (Exception e) {
+    } catch (ApiAuthenticationException | ServletException | IOException e) {
     }
-
   }
 
   private String extractBearerToken(HttpServletRequest req) {
     var author = req.getHeader(HttpHeaders.AUTHORIZATION);
 
-    if (author == null || !author.startsWith(BEARER_PERFIX)) {
+    if (author == null || !author.startsWith(BEARER_PREFIX)) {
       return null;
     }
 
-    var token = author.substring(BEARER_PERFIX.length()).trim();
+    var token = author.substring(BEARER_PREFIX.length()).trim();
 
     return token.isBlank() ? null : token;
   }
