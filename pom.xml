@@ -24,6 +24,13 @@
         <lombok.version>1.18.46</lombok.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -126,6 +133,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-messaging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.le-pp2402</groupId>
+            <artifactId>simple-proof-of-work</artifactId>
+            <version>release-v2</version>
         </dependency>
     </dependencies>
 
