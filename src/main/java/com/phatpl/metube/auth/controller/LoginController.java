@@ -11,9 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.phatpl.metube.auth.dto.request.LoginRequest;
 import com.phatpl.metube.common.annotation.ValidateSchema;
 
+import io.github.lepp2402.service.POWService;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 public class LoginController {
+
+  private final POWService powService;
+
+  public LoginController(POWService powService) {
+    this.powService = powService;
+  }
 
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody @ValidateSchema("schemas/login.yaml") LoginRequest loginRequest) {
@@ -21,9 +29,7 @@ public class LoginController {
   }
 
   @GetMapping("/pow/challenge")
-  public ResponseEntity<String> getChallenge() {
-    // Generate a challenge for proof-of-work
-    String challenge = "random-challenge-string"; // Replace with actual challenge generation logic
-    return ResponseEntity.ok(challenge);
+  public ResponseEntity<?> getChallenge() {
+    return ResponseEntity.ok(powService.genChallenge(3, 10));
   }
 }
