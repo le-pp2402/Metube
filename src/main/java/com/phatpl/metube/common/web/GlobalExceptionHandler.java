@@ -16,6 +16,7 @@ import com.phatpl.metube.common.api.JsonApiErrorFactory;
 import com.phatpl.metube.common.api.JsonApiErrorSource;
 import com.phatpl.metube.common.api.JsonApiErrorWriter;
 import com.phatpl.metube.common.exception.ApiException;
+import com.phatpl.metube.common.exception.SchemaValidationException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -176,6 +177,25 @@ public class GlobalExceptionHandler {
         "An unexpected error occurred. Please try again later.",
         null,
         ex);
+  }
+
+  @ExceptionHandler(SchemaValidationException.class)
+  public void handleValidationErrors(
+      SchemaValidationException ex,
+      HttpServletRequest req,
+      HttpServletResponse res) throws IOException {
+
+    var errors = ex.getErrors().stream()
+        .map(errorMessage -> errorFactory.create(
+            req,
+            HttpStatus.UNPROCESSABLE_CONTENT,
+            ApiErrorCode.VALIDATION_FAILED,
+            "Schema validation failed",
+            errorMessage,
+            null))
+        .toList();
+
+    errorWriter.writeMany(req, res, HttpStatus.UNPROCESSABLE_CONTENT, errors);
   }
 
   /**

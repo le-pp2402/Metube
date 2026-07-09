@@ -46,10 +46,14 @@ public class User extends Auditable implements ISoftDelete {
   @Column(name = "token_ver", nullable = false)
   Long tokenVer = 0L;
 
-  public void register(String username, String password, String email) {
+  private User(String username, String pwdHash, String email) {
     this.username = username;
-    this.pwdHash = password;
+    this.pwdHash = pwdHash;
     this.email = email;
+  }
+
+  public static User register(String username, String password, String email) {
+    return new User(username, password, email);
   }
 
   public void changePassword(String newHashedPwd) {

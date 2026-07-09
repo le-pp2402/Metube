@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -53,15 +53,16 @@ public class SecurityConfig {
       JsonApiAccessDeniedHandler accessDeniedHandler,
       CorsConfigurationSource corsSource) throws Exception {
 
+    CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+    requestHandler.setCsrfRequestAttributeName(null);
+
     // CSRF: enabled via double-submit cookie pattern.
     // CookieCsrfTokenRepository stores the CSRF token in a cookie named XSRF-TOKEN.
     // withHttpOnlyFalse() lets JavaScript read that cookie and attach it as
-    // X-XSRF-TOKEN header on POST/PUT/PATCH/DELETE. Spring validates the pair.
-    // This is required because we use cookies for JWT storage (HttpOnly cookie
-    // is invisible to JS, but the CSRF cookie is readable so the frontend can
-    // send it back as a header — the two cookies together prove same-origin
-    // intent).
-    http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+    // X-XSRF-TOKEN header on POST/PUT/PATCH/DELETE.
+    http.csrf(csrf -> csrf
+        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+        .csrfTokenRequestHandler(requestHandler));
 
     http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -70,7 +71,7 @@ public class SecurityConfig {
     http.authorizeHttpRequests(
         auth -> auth
             .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/v1/auth/**").permitAll()
             .anyRequest().authenticated());
 
     http.exceptionHandling(ex -> ex.authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDeniedHandler));
