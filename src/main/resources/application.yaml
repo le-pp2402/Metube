@@ -27,6 +27,11 @@ metube:
     refresh-token-validity: 7d # 7 days
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  aws:
+    region: ${AWS_REGION:us-east-1}
+    access-key-id: ${AWS_ACCESS_KEY_ID:test}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY:test}
+    endpoint: ${AWS_ENDPOINT:http://localhost:4566}
 logging:
   pattern:
     console:

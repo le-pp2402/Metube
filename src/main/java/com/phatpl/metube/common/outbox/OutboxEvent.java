@@ -14,6 +14,8 @@ import lombok.Setter;
 
 import java.time.Instant;
 
+import org.hibernate.annotations.JdbcTypeCode;
+
 @Entity
 @Getter
 @Table(name = "outbox")
@@ -29,6 +31,7 @@ public class OutboxEvent extends Auditable {
     @Column(name = "event_type", nullable = false, length = 100)
     private String eventType;
 
+    @JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "jsonb")
     private String payload;
 

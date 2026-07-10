@@ -40,6 +40,15 @@ services:
     volumes:
       - postgre_data:/var/lib/postgresql/data
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    ports:
+      - '8025:8025' # Web UI
+      - '1025:1025' # SMTP server
+    networks:
+      - auth-network
+
 volumes:
   redis_data:
   redis_insight_data:

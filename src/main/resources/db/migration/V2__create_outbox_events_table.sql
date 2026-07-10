@@ -3,7 +3,7 @@ CREATE TABLE outbox (
     event_type VARCHAR(100) NOT NULL,
     payload JSONB NOT NULL,                       
     status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, PROCESSING, SENT, FAILED
-    retry_count INT DEFAULT 0,
+    retry_count INT DEFAULT 0 NOT NULL,
     next_retry_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

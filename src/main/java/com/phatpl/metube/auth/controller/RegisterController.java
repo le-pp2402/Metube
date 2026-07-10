@@ -23,7 +23,8 @@ public class RegisterController {
 
   @PostMapping("/register")
   public ResponseEntity<String> register(
-      @RequestBody @ValidateSchema("schemas/register.yaml") RegisterRequest registerRequest) throws JsonProcessingException {
+      @RequestBody @ValidateSchema("schemas/register.yaml") RegisterRequest registerRequest)
+      throws JsonProcessingException {
     authService.register(registerRequest);
     return ResponseEntity.ok("success");
   }
