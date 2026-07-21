@@ -111,8 +111,8 @@ public class SecurityConfig {
 
     config.setAllowedOrigins(corsProperties.allowedOrigins());
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Csrf-Token"));
-    config.setExposedHeaders(List.of("Authorization", "X-Request_id", "Csrf-Token"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
+    config.setExposedHeaders(List.of("Authorization", "X-Request_id", "X-XSRF-TOKEN"));
     config.setAllowCredentials(true);
     config.setMaxAge(3600L);
 

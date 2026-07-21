@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.phatpl.metube.auth.dto.request.RegisterRequest;
 import com.phatpl.metube.auth.service.AuthService;
 import com.phatpl.metube.common.annotation.ValidateSchema;
+import com.phatpl.metube.common.api.ApiResponse;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -22,10 +23,10 @@ public class RegisterController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<String> register(
+  public ResponseEntity<ApiResponse<Void>> register(
       @RequestBody @ValidateSchema("schemas/register.yaml") RegisterRequest registerRequest)
       throws JsonProcessingException {
     authService.register(registerRequest);
-    return ResponseEntity.ok("success");
+    return ResponseEntity.ok(ApiResponse.success());
   }
 }

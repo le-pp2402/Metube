@@ -8,7 +8,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import com.phatpl.metube.common.api.ApiErrorCode;
-import com.phatpl.metube.common.api.JsonApiErrorWriter;
+import com.phatpl.metube.common.api.ApiErrorWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +16,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JsonApiAccessDeniedHandler implements AccessDeniedHandler {
-  private final JsonApiErrorWriter errorWriter;
+  private final ApiErrorWriter errorWriter;
 
-  public JsonApiAccessDeniedHandler(JsonApiErrorWriter errorWriter) {
+  public JsonApiAccessDeniedHandler(ApiErrorWriter errorWriter) {
     this.errorWriter = errorWriter;
   }
 
@@ -33,9 +33,7 @@ public class JsonApiAccessDeniedHandler implements AccessDeniedHandler {
         response,
         HttpStatus.FORBIDDEN,
         ApiErrorCode.ACCESS_DENIED,
-        "Access denied",
-        accessDeniedException.getMessage(),
-        null,
+        "You do not have permission to perform this action",
         accessDeniedException);
   }
 }

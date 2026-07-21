@@ -1,6 +1,5 @@
 package com.phatpl.metube.auth.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.phatpl.metube.auth.dto.request.LoginRequest;
 import com.phatpl.metube.common.annotation.ValidateSchema;
+import com.phatpl.metube.common.api.ApiResponse;
 
 import io.github.lepp2402.service.POWService;
 
@@ -24,12 +24,13 @@ public class LoginController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(@RequestBody @ValidateSchema("schemas/login.yaml") LoginRequest loginRequest) {
-    return ResponseEntity.ok("Login successful");
+  public ResponseEntity<ApiResponse<Void>> login(
+      @RequestBody @ValidateSchema("schemas/login.yaml") LoginRequest loginRequest) {
+    return ResponseEntity.ok(ApiResponse.success());
   }
 
   @GetMapping("/pow/challenge")
-  public ResponseEntity<?> getChallenge() {
-    return ResponseEntity.ok(powService.genChallenge(3, 10));
+  public ResponseEntity<ApiResponse<?>> getChallenge() {
+    return ResponseEntity.ok(ApiResponse.success(powService.genChallenge(3, 10)));
   }
 }

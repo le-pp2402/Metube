@@ -13,7 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.phatpl.metube.auth.service.JwtService;
 import com.phatpl.metube.common.api.ApiErrorCode;
-import com.phatpl.metube.common.api.JsonApiErrorWriter;
+import com.phatpl.metube.common.api.ApiErrorWriter;
 import com.phatpl.metube.common.exception.InvalidTokenException;
 import org.springframework.http.HttpStatus;
 
@@ -31,9 +31,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final String ACCESS = "access";
 
   private final JwtService jwtService;
-  private final JsonApiErrorWriter errorWriter;
+  private final ApiErrorWriter errorWriter;
 
-  public JwtAuthenticationFilter(JwtService jwtService, JsonApiErrorWriter errorWriter) {
+  public JwtAuthenticationFilter(JwtService jwtService, ApiErrorWriter errorWriter) {
     this.jwtService = jwtService;
     this.errorWriter = errorWriter;
   }
@@ -85,9 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           response,
           HttpStatus.UNAUTHORIZED,
           errorCode,
-          "Authentication Failed",
           detail,
-          null,
           e);
     }
   }
